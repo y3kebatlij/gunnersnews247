@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ContentItemCard } from "./ContentItemCard";
 import { FilterPanel } from "./FilterPanel";
+import { LoadingSkeleton } from "./LoadingSkeleton";
+import { ErrorRetry } from "./ErrorRetry";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
@@ -23,28 +25,28 @@ export function ContentFeed() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchContent = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const params = new URLSearchParams();
-        if (contentType) params.set("contentType", contentType);
-        if (sourceCountry) params.set("sourceCountry", sourceCountry);
+  const fetchContent = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const params = new URLSearchParams();
+      if (contentType) params.set("contentType", contentType);
+      if (sourceCountry) params.set("sourceCountry", sourceCountry);
 
-        const response = await fetch(`${API_URL}/content?${params}`);
-        if (!response.ok) throw new Error("Failed to fetch content");
-        const data = await response.json();
-        setItems(data.items ?? []);
-      } catch {
-        setError("Unable to load content. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchContent();
+      const response = await fetch(`${API_URL}/content?${params}`);
+      if (!response.ok) throw new Error("Failed to fetch content");
+      const data = await response.json();
+      setItems(data.items ?? []);
+    } catch {
+      setError("Unable to load content. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }, [contentType, sourceCountry]);
+
+  useEffect(() => {
+    fetchContent();
+  }, [fetchContent]);
 
   return (
     <section aria-label="News feed">
@@ -55,12 +57,8 @@ export function ContentFeed() {
         onContentTypeChange={setContentType}
         onSourceCountryChange={setSourceCountry}
       />
-      {loading && <p>Loading...</p>}
-      {error && (
-        <div className="usa-alert usa-alert--error" role="alert">
-          <div className="usa-alert__body"><p className="usa-alert__text">{error}</p></div>
-        </div>
-      )}
+      {loading && <LoadingSkeleton count={5} type="card" />}
+      {error && <ErrorRetry message={error} onRetry={fetchContent} />}
       {!loading && !error && items.length === 0 && <p>No content available.</p>}
       <div className="usa-card-group">
         {items.map((item) => (

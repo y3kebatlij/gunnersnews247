@@ -564,3 +564,148 @@ a, .usa-link {
 a:hover, .usa-link:hover {
   color: var(--link-hover) !important;
 }
+
+/* ========== Loading Skeletons ========== */
+.skeleton-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeleton-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.skeleton-title {
+  height: 1.2rem;
+  width: 70%;
+  background: linear-gradient(90deg, var(--border-color) 25%, var(--bg-card-hover) 50%, var(--border-color) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-line {
+  height: 0.85rem;
+  width: 100%;
+  background: linear-gradient(90deg, var(--border-color) 25%, var(--bg-card-hover) 50%, var(--border-color) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-line--short {
+  width: 40%;
+}
+
+.skeleton-table-header {
+  height: 2.5rem;
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border-color) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px 4px 0 0;
+  margin-bottom: 2px;
+}
+
+.skeleton-table-row {
+  height: 2rem;
+  background: linear-gradient(90deg, var(--border-color) 25%, var(--bg-card-hover) 50%, var(--border-color) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 2px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ========== Mobile Hamburger Menu ========== */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .usa-nav {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border-top: 2px solid var(--arsenal-red);
+    padding: 1rem;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .usa-nav--open {
+    display: flex !important;
+  }
+
+  .usa-nav__primary {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .usa-nav__primary-item {
+    display: block;
+  }
+
+  .usa-nav__link {
+    display: block;
+    padding: 0.75rem 1rem !important;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .usa-nav__secondary {
+    flex-direction: column;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .usa-nav-container {
+    position: relative;
+  }
+
+  .usa-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+}
+
+/* ========== Router NavLink active state ========== */
+a.usa-nav__link {
+  text-decoration: none;
+  color: var(--text-primary) !important;
+}
+
+a.usa-nav__link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+a.usa-nav__link.usa-current {
+  border-bottom: 3px solid var(--arsenal-red) !important;
+  color: #FFFFFF !important;
+}

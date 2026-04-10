@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import { WebSocketProvider } from "./context/WebSocketContext";
 import { Header } from "./components/Header";
@@ -10,29 +11,30 @@ import { StandingsTable } from "./components/StandingsTable";
 import { BookmarkList } from "./components/BookmarkList";
 import { NotificationBanner } from "./components/NotificationBanner";
 
-type View = "feed" | "transfers" | "schedule" | "standings" | "bookmarks";
-
 export function App() {
-  const [currentView, setCurrentView] = useState<View>("feed");
-
   return (
-    <ThemeProvider>
-      <WebSocketProvider>
-        <div className="usa-layout-docs">
-          <Header onNavigate={setCurrentView} currentView={currentView} />
-          <main className="usa-section" id="main-content">
-            <div className="grid-container">
-              <Scoreboard />
-              {currentView === "feed" && <ContentFeed />}
-              {currentView === "transfers" && <TransferFeed />}
-              {currentView === "schedule" && <ScheduleView />}
-              {currentView === "standings" && <StandingsTable />}
-              {currentView === "bookmarks" && <BookmarkList />}
-            </div>
-          </main>
-          <NotificationBanner />
-        </div>
-      </WebSocketProvider>
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <WebSocketProvider>
+          <div className="usa-layout-docs">
+            <Header />
+            <main className="usa-section" id="main-content">
+              <div className="grid-container">
+                <Scoreboard />
+                <Routes>
+                  <Route path="/" element={<ContentFeed />} />
+                  <Route path="/transfers" element={<TransferFeed />} />
+                  <Route path="/schedule" element={<ScheduleView />} />
+                  <Route path="/standings" element={<StandingsTable />} />
+                  <Route path="/saved" element={<BookmarkList />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </div>
+            </main>
+            <NotificationBanner />
+          </div>
+        </WebSocketProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
