@@ -7,6 +7,148 @@
 import express from "express";
 import type { MatchState, MatchEvent, StandingsEntry, Lineup } from "@arsenal/shared";
 import { MAX_SCHEDULE_MATCHES } from "@arsenal/shared";
+import { XMLParser } from "fast-xml-parser";
+
+const xmlParser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@_" });
+
+// ========== Live RSS Feed Crawler ==========
+interface RSSSource {
+  name: string;
+  url: string;
+  country: string;
+  contentType: string;
+}
+
+const LIVE_RSS_SOURCES: RSSSource[] = [
+  { name: "Arsenal.com", url: "https://www.arsenal.com/news.rss", country: "England", contentType: "article" },
+  { name: "BBC Sport", url: "https://feeds.bbci.co.uk/sport/football/teams/arsenal/rss.xml", country: "England", contentType: "newspaper" },
+  { name: "The Guardian", url: "https://www.theguardian.com/football/arsenal/rss", country: "England", contentType: "newspaper" },
+  { name: "Arseblog", url: "https://arseblog.com/feed/", country: "England", contentType: "blog" },
+  { name: "Sky Sports", url: "https://www.skysports.com/rss/12040", country: "England", contentType: "newspaper" },
+  { name: "Football.London", url: "https://www.football.london/arsenal-fc/?service=rss", country: "England", contentType: "article" },
+  { name: "TEAMtalk", url: "https://www.teamtalk.com/arsenal/feed", country: "England", contentType: "newspaper" },
+  { name: "ESPN FC", url: "https://www.espn.com/espn/rss/soccer/news", country: "USA", contentType: "newspaper" },
+  { name: "101 Great Goals", url: "https://www.101greatgoals.com/feed/", country: "England", contentType: "blog" },
+  { name: "FourFourTwo", url: "https://www.fourfourtwo.com/feeds/all", country: "England", contentType: "article" },
+];
+
+const ARSENAL_KEYWORDS = ["arsenal", "gunners", "arteta", "emirates stadium", "saka", "rice", "odegaard", "saliba", "havertz", "gyokeres", "raya"];
+
+function isArsenalRelated(text: string): boolean {
+  const lower = text.toLowerCase();
+  return ARSENAL_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, " ").replace(/&[^;]+;/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function estimateWordCount(html: string): number {
+  const text = stripHtml(html);
+  return text.length > 0 ? text.split(" ").length : 0;
+}
+
+async function crawlRSSFeed(source: RSSSource): Promise<StoredContent[]> {
+  try {
+    const response = await fetch(source.url, {
+      headers: { "User-Agent": "ArsenalNewsAggregator/1.0" },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const xml = await response.text();
+    const parsed = xmlParser.parse(xml);
+
+    const channel = parsed?.rss?.channel;
+    let rawItems: any[] = [];
+    if (channel?.item) {
+      rawItems = Array.isArray(channel.item) ? channel.item : [channel.item];
+    } else if (parsed?.feed?.entry) {
+      rawItems = Array.isArray(parsed.feed.entry) ? parsed.feed.entry : [parsed.feed.entry];
+    }
+
+    const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
+    const results: StoredContent[] = [];
+
+    for (const item of rawItems) {
+      const title = String(item.title ?? "").trim();
+      if (!title) continue;
+
+      const description = stripHtml(String(item.description ?? item["content:encoded"] ?? item.summary ?? ""));
+      const fullText = `${title} ${description}`;
+
+      // Filter: Arsenal-related only (skip for Arsenal.com which is all Arsenal)
+      if (source.name !== "Arsenal.com" && !isArsenalRelated(fullText)) continue;
+
+      // Parse publication date
+      const pubDateStr = item.pubDate ?? item.published ?? item.updated ?? "";
+      const pubDate = new Date(pubDateStr);
+      if (isNaN(pubDate.getTime())) continue;
+
+      // Filter: only last 3 days
+      if (pubDate.getTime() < threeDaysAgo) continue;
+
+      // Get link
+      const link = typeof item.link === "string" ? item.link
+        : item.link?.["@_href"] ?? item.link?.href ?? source.url;
+
+      // Estimate word count from full article content if available
+      const bodyHtml = String(item["content:encoded"] ?? item.description ?? "");
+      const wordCount = estimateWordCount(bodyHtml);
+      const realisticWordCount = Math.max(wordCount, 400); // Minimum 400 words for a real article
+
+      const durationLabel = computeDurationLabel(source.contentType, realisticWordCount);
+      const transfer = classifyTransferItem(title, description);
+
+      results.push({
+        contentId: `live-${Math.random().toString(36).substring(2, 10)}`,
+        aggregationDate: new Date().toISOString().split("T")[0],
+        sourceUrl: link,
+        title,
+        summary: generateSummary(description),
+        publicationDate: pubDate.toISOString(),
+        sourceName: source.name,
+        sourceCountry: source.country,
+        contentType: source.contentType,
+        durationLabel,
+        isTransfer: transfer !== null,
+        transferType: transfer?.transferType ?? null,
+      });
+    }
+
+    return results;
+  } catch (error) {
+    console.warn(`  WARN: Failed to crawl ${source.name}: ${error instanceof Error ? error.message : error}`);
+    return [];
+  }
+}
+
+async function crawlAllFeeds(): Promise<StoredContent[]> {
+  console.log(`Crawling ${LIVE_RSS_SOURCES.length} live RSS feeds...`);
+  const allItems: StoredContent[] = [];
+
+  for (const source of LIVE_RSS_SOURCES) {
+    process.stdout.write(`  Crawling ${source.name}...`);
+    const items = await crawlRSSFeed(source);
+    console.log(` ${items.length} articles`);
+    allItems.push(...items);
+  }
+
+  // Deduplicate by title similarity
+  const seen = new Set<string>();
+  const deduped = allItems.filter(item => {
+    const key = item.title.toLowerCase().substring(0, 60);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  // Sort by publication date, newest first
+  deduped.sort((a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime());
+
+  console.log(`\nTotal: ${deduped.length} unique Arsenal articles from last 3 days`);
+  return deduped;
+}
 
 // Inline the functions to avoid cross-package import issues with ts-node
 const READING_RATE_WPM = 200;
@@ -480,16 +622,29 @@ app.delete("/subscribe", (req, res) => {
 
 // ========== Start ==========
 const PORT = 3001;
-seedSampleData();
 
-app.listen(PORT, () => {
-  console.log(`\n=== Arsenal News Aggregator — Local Dev Server ===`);
-  console.log(`API: http://localhost:${PORT}`);
-  console.log(`Data: Real 2025-26 season, updated April 9, 2026`);
-  console.log(`\nArsenal: 1st, 70 pts, W21 D7 L3 (31 games)`);
-  console.log(`Next: vs Bournemouth (H) — Apr 11`);
-  console.log(`Champions League: QF 2nd leg vs Sporting (H) — Apr 15`);
-  console.log(`\nSquad: Raya, Saliba, Gabriel, Calafiori, White, Rice, Zubimendi,`);
-  console.log(`       Merino, Odegaard, Saka, Gyokeres (#14), Madueke, Havertz`);
-  console.log(`\n${contentItems.length} articles | 6 fixtures | 20 teams in standings`);
+async function startServer() {
+  // Try live RSS feeds first
+  console.log("\n=== Arsenal News Aggregator — Starting ===\n");
+  const liveItems = await crawlAllFeeds();
+
+  if (liveItems.length > 0) {
+    contentItems.push(...liveItems);
+    console.log(`\nLoaded ${liveItems.length} LIVE articles from RSS feeds`);
+  } else {
+    console.log("\nLive feeds returned no results, loading sample data...");
+    seedSampleData();
+  }
+
+  app.listen(PORT, () => {
+    console.log(`\n=== Arsenal News Aggregator — Local Dev Server ===`);
+    console.log(`API: http://localhost:${PORT}`);
+    console.log(`Mode: ${liveItems.length > 0 ? "LIVE RSS feeds" : "Sample data"}`);
+    console.log(`\n${contentItems.length} articles | 6 fixtures | 20 teams in standings`);
+  });
+}
+
+startServer().catch(err => {
+  console.error("Failed to start:", err);
+  process.exit(1);
 });
