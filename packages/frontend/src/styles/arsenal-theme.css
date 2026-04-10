@@ -1,0 +1,566 @@
+/* Arsenal News Aggregator — Custom Theme */
+/* Arsenal colors: Red #EF0107, Navy #023474, Gold #9C824A */
+/* Dark theme for comfortable reading */
+
+:root {
+  --arsenal-red: #EF0107;
+  --arsenal-dark-red: #C1001F;
+  --arsenal-navy: #023474;
+  --arsenal-gold: #9C824A;
+  --bg-primary: #1A1A2E;
+  --bg-secondary: #16213E;
+  --bg-card: #1F2B47;
+  --bg-card-hover: #253352;
+  --bg-input: #253352;
+  --border-color: #2A3A5C;
+  --text-primary: #E8E8E8;
+  --text-secondary: #A0AEC0;
+  --text-heading: #FFFFFF;
+  --link-color: #73B3E7;
+  --link-hover: #EF4444;
+}
+
+/* Global */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+
+/* Header */
+.usa-header {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 4px solid var(--arsenal-red);
+}
+
+.usa-header .usa-logo__text,
+.usa-header .usa-logo__text button {
+  color: var(--arsenal-red) !important;
+  font-size: 1.4rem;
+}
+
+.usa-nav__link,
+.usa-nav__primary-item button {
+  color: var(--text-primary) !important;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.usa-nav__link:hover,
+.usa-nav__primary-item button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px;
+}
+
+.usa-current {
+  border-bottom: 3px solid var(--arsenal-red) !important;
+  color: #FFFFFF !important;
+}
+
+.usa-nav__secondary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Main content area */
+.usa-section {
+  padding: 1.5rem 0;
+}
+
+.usa-heading {
+  color: var(--text-heading);
+  border-bottom: 3px solid var(--arsenal-red);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Cards */
+.usa-card__container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.2s, background-color 0.2s;
+  overflow: hidden;
+}
+
+.usa-card__container:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  background-color: var(--bg-card-hover);
+}
+
+.usa-card__header {
+  padding: 1rem 1.25rem 0;
+}
+
+.usa-card__heading {
+  font-size: 1.05rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.usa-card__body {
+  padding: 0.75rem 1.25rem;
+  color: var(--text-primary);
+}
+
+.usa-card__footer {
+  padding: 0.5rem 1.25rem 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Links */
+.usa-link,
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.usa-link:hover,
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Tags / Badges */
+.usa-tag {
+  background-color: var(--arsenal-gold);
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.bg-red {
+  background-color: var(--arsenal-red) !important;
+  color: #FFFFFF !important;
+}
+
+.bg-green {
+  background-color: #2E8540 !important;
+  color: #FFFFFF !important;
+}
+
+.bg-gold {
+  background-color: var(--arsenal-gold) !important;
+  color: #FFFFFF !important;
+}
+
+/* Scoreboard */
+.usa-alert.usa-alert--info[aria-label="Live scoreboard"] {
+  background-color: var(--arsenal-red);
+  border-left: 4px solid var(--arsenal-dark-red);
+  color: #FFFFFF;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.usa-alert.usa-alert--info[aria-label="Live scoreboard"] .usa-alert__body {
+  color: #FFFFFF;
+}
+
+/* Tables */
+.usa-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  color: var(--text-primary);
+}
+
+.usa-table th {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0.75rem;
+  font-weight: 600;
+  text-align: left;
+  font-size: 0.85rem;
+  border-bottom: 2px solid var(--arsenal-red);
+}
+
+.usa-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+}
+
+.usa-table tbody tr {
+  background-color: var(--bg-card);
+}
+
+.usa-table tbody tr:hover {
+  background-color: var(--bg-card-hover) !important;
+}
+
+.usa-table thead tr {
+  background-color: var(--bg-secondary);
+}
+
+/* Override any USWDS default table striping */
+.usa-table--borderless td,
+.usa-table--borderless th {
+  background-color: inherit;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.usa-table--striped tbody tr:nth-child(odd) td {
+  background-color: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+}
+
+/* Arsenal highlighted row in standings */
+.bg-red-warm-10v,
+tr[aria-label="Arsenal (highlighted)"] {
+  background-color: rgba(239, 1, 7, 0.15) !important;
+  border-left: 4px solid var(--arsenal-red);
+}
+
+/* Match within 24 hours highlight */
+.bg-gold-lighter {
+  background-color: rgba(156, 130, 74, 0.2) !important;
+}
+
+/* Buttons */
+.usa-button {
+  background-color: var(--arsenal-red);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.usa-button:hover {
+  background-color: var(--arsenal-dark-red);
+}
+
+.usa-button--small {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+/* Form inputs */
+.usa-input,
+.usa-select {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.usa-input:focus,
+.usa-select:focus {
+  border-color: var(--link-color);
+  outline: 2px solid rgba(115, 179, 231, 0.3);
+}
+
+.usa-input--small {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+/* Labels */
+.usa-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+/* Error messages */
+.usa-error-message {
+  color: #EF4444;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.usa-success-message {
+  color: #4ADE80;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* Alerts */
+.usa-alert {
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.usa-alert--error {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-left: 4px solid var(--arsenal-red);
+  color: var(--text-primary);
+}
+
+.usa-alert--info {
+  background-color: rgba(115, 179, 231, 0.1);
+  border-left: 4px solid var(--link-color);
+  color: var(--text-primary);
+}
+
+/* Notification banner */
+div[role="alert"][aria-live="assertive"] {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-top: 3px solid var(--arsenal-red);
+}
+
+div[role="alert"][aria-live="assertive"] .usa-alert__text {
+  color: var(--text-primary);
+}
+
+/* Filter panel */
+fieldset.usa-fieldset {
+  border: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+}
+
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filter-type-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-chip {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-chip:hover {
+  background-color: var(--bg-card-hover);
+  border-color: var(--link-color);
+}
+
+.filter-chip--active {
+  background-color: var(--arsenal-red) !important;
+  color: #FFFFFF !important;
+  border-color: var(--arsenal-red) !important;
+}
+
+.filter-country {
+  max-width: 200px;
+}
+
+/* Source info text */
+.text-base-dark {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.font-sans-3xs {
+  font-size: 0.8rem;
+}
+
+/* Transfer feed items */
+.usa-list--unstyled {
+  list-style: none;
+  padding: 0;
+}
+
+.margin-bottom-2 {
+  margin-bottom: 1rem;
+}
+
+/* Bookmark button */
+button[aria-label*="bookmark"] {
+  font-size: 1.3rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  transition: transform 0.15s;
+}
+
+button[aria-label*="bookmark"]:hover {
+  transform: scale(1.2);
+}
+
+/* Theme toggle */
+button[aria-label*="mode"] {
+  font-size: 1.2rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Subscribe form inline */
+.usa-form--inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Navigation list */
+.usa-nav__primary {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 0.25rem;
+}
+
+.usa-nav__primary-item {
+  display: inline-block;
+}
+
+/* Grid container */
+.grid-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.grid-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.grid-col-6 {
+  flex: 0 0 calc(50% - 0.75rem);
+}
+
+@media (max-width: 639px) {
+  .grid-col-6 {
+    flex: 0 0 100%;
+  }
+}
+
+/* Card group */
+.usa-card-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Accordion reset */
+.usa-accordion {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Nav container */
+.usa-nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.usa-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Lineup lists */
+.usa-list {
+  padding-left: 1.5rem;
+}
+
+.usa-list li {
+  padding: 0.15rem 0;
+}
+
+/* Video embed */
+.video-embed {
+  margin-top: 0.75rem;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Screen reader only */
+.usa-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ========== Force dark theme on all USWDS overrides ========== */
+table, table th, table td, table tr,
+.usa-table, .usa-table th, .usa-table td, .usa-table tr,
+.usa-table caption {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.usa-table thead tr,
+.usa-table thead th {
+  background-color: var(--bg-secondary) !important;
+  border-bottom-color: var(--arsenal-red) !important;
+}
+
+.usa-table tbody tr:hover td {
+  background-color: var(--bg-card-hover) !important;
+}
+
+/* Arsenal row highlight override */
+.bg-red-warm-10v td,
+tr[aria-label="Arsenal (highlighted)"] td {
+  background-color: rgba(239, 1, 7, 0.15) !important;
+}
+
+/* 24-hour match highlight override */
+.bg-gold-lighter td {
+  background-color: rgba(156, 130, 74, 0.2) !important;
+}
+
+/* Ensure all text in the app is light on dark */
+p, span, li, h1, h2, h3, h4, h5, h6, label, legend, td, th {
+  color: var(--text-primary);
+}
+
+a, .usa-link {
+  color: var(--link-color) !important;
+}
+
+a:hover, .usa-link:hover {
+  color: var(--link-hover) !important;
+}

@@ -1,0 +1,68 @@
+// Responsive overrides for Arsenal News Aggregator
+// Uses USWDS grid breakpoints
+
+// Mobile-first: stack cards vertically
+.usa-card-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .usa-card {
+      flex: 0 0 calc(50% - 0.5rem);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .usa-card {
+      flex: 0 0 calc(33.333% - 0.667rem);
+    }
+  }
+}
+
+// Responsive table scrolling
+.usa-table {
+  @media (max-width: 639px) {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+// Notification banner responsive
+.notification-banner {
+  padding: 0.5rem 1rem;
+
+  @media (min-width: 640px) {
+    padding: 0.75rem 2rem;
+  }
+}
+
+// Header nav responsive
+.usa-nav__secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  @media (max-width: 639px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+// Filter panel responsive
+.usa-fieldset {
+  @media (max-width: 639px) {
+    flex-direction: column !important;
+  }
+}
+
+// Video embed responsive
+.video-embed video {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}

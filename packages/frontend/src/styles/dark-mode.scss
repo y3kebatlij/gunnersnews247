@@ -1,0 +1,55 @@
+// Dark mode overrides using USWDS design tokens
+[data-theme="dark"] {
+  --usa-background: #1b1b1b;
+  --usa-text: #f0f0f0;
+  --usa-link: #73b3e7;
+  --usa-border: #565c65;
+
+  background-color: var(--usa-background);
+  color: var(--usa-text);
+
+  .usa-header {
+    background-color: #2d2d2d;
+  }
+
+  .usa-card__container {
+    background-color: #2d2d2d;
+    border-color: var(--usa-border);
+  }
+
+  .usa-table {
+    background-color: #2d2d2d;
+    color: var(--usa-text);
+
+    th, td {
+      border-color: var(--usa-border);
+    }
+  }
+
+  .usa-alert {
+    background-color: #2d2d2d;
+    border-color: var(--usa-border);
+  }
+
+  .usa-link,
+  a {
+    color: var(--usa-link);
+  }
+
+  .usa-input,
+  .usa-select {
+    background-color: #3d3d3d;
+    color: var(--usa-text);
+    border-color: var(--usa-border);
+  }
+
+  .usa-button {
+    background-color: #005ea2;
+    color: #ffffff;
+  }
+
+  // Ensure sufficient contrast for accessibility
+  .usa-tag {
+    color: #1b1b1b;
+  }
+}

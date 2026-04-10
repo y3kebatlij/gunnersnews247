@@ -1,0 +1,23 @@
+You are a senior developer and architect. 
+You have been tasking with developing a solution for a enw business need. 
+The business need will be identified below. 
+This solution shall follow all the appropriate steering guidannce for this project
+It shoudl be specifically devloped in typescript, using AWS serverless patterns, be configurable, deployable via command line (bash or powershell) and via gitlab runner
+
+Here are the business requirements:
+
+The business is a news aggregator for Arsenal footbal club. Every day, it should surf the internet for the top arsenal news globally and provide a summary with the link to the reader. It shall contain artivles, blogs, newspapers, podcasts. 
+
+The solution shall allow people to subscribe and they shall receive the daily information at 9:00 EST
+
+the soultion shall show how long the article or podcast is at the end of the title so readers can plan how long it will take them to read or listen
+
+the soultion shall embed vidoes and highlights
+
+shall contain live scoreboard for live games, schedule of upcoming games
+
+shall contain real time notifications at the bottom in a banner stylefor breaking news and scores
+
+the solution shall research all the top soccer websites globally to make sure international perspective of news is presented ot the audience
+
+ 

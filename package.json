@@ -1,0 +1,27 @@
+{
+  "name": "arsenal-news-aggregator",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/shared",
+    "packages/backend",
+    "packages/frontend"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npx vitest --run",
+    "lint": "npx tsc --noEmit"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.0",
+    "@types/express": "^5.0.6",
+    "aws-cdk": "^2.1118.0",
+    "dynamodb-local": "^0.0.38",
+    "express": "^5.2.1",
+    "fast-check": "^4.1.1",
+    "jest-axe": "^9.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.1"
+  }
+}

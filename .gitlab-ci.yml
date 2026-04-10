@@ -1,0 +1,57 @@
+stages:
+  - build
+  - test
+  - security
+  - deploy
+
+variables:
+  NODE_VERSION: "22"
+
+.node_setup: &node_setup
+  before_script:
+    - npm ci
+
+build:
+  stage: build
+  <<: *node_setup
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - packages/*/dist/
+      - packages/frontend/dist/
+
+test:
+  stage: test
+  <<: *node_setup
+  script:
+    - npx vitest --run
+
+semgrep:
+  stage: security
+  script:
+    - python3 -m venv .venv
+    - .venv/bin/pip install semgrep
+    - .venv/bin/semgrep scan --config "p/default" --config "p/owasp-top-ten" .
+  allow_failure: false
+
+sbom:
+  stage: security
+  script:
+    - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b ./bin
+    - ./bin/syft dir:. -o spdx-json > sbom.spdx.json
+    - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b ./bin
+    - ./bin/grype sbom:sbom.spdx.json
+  artifacts:
+    paths:
+      - sbom.spdx.json
+
+deploy:
+  stage: deploy
+  <<: *node_setup
+  script:
+    - npx aws-cdk deploy --all --require-approval never
+  environment:
+    name: production
+  only:
+    - main
