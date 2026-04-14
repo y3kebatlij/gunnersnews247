@@ -8,6 +8,9 @@ import express from "express";
 import type { MatchState, MatchEvent, StandingsEntry, Lineup } from "@arsenal/shared";
 import { MAX_SCHEDULE_MATCHES } from "@arsenal/shared";
 import { XMLParser } from "fast-xml-parser";
+import * as dotenv from "dotenv";
+
+dotenv.config(); // Load .env file
 
 const xmlParser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@_" });
 
@@ -20,16 +23,16 @@ interface RSSSource {
 }
 
 const LIVE_RSS_SOURCES: RSSSource[] = [
-  { name: "Arsenal.com", url: "https://www.arsenal.com/news.rss", country: "England", contentType: "article" },
-  { name: "BBC Sport", url: "https://feeds.bbci.co.uk/sport/football/teams/arsenal/rss.xml", country: "England", contentType: "newspaper" },
-  { name: "The Guardian", url: "https://www.theguardian.com/football/arsenal/rss", country: "England", contentType: "newspaper" },
+  { name: "Arsenal.com", url: "https://www.arsenal.com/news.rss", country: "England", contentType: "news" },
+  { name: "BBC Sport", url: "https://feeds.bbci.co.uk/sport/football/teams/arsenal/rss.xml", country: "England", contentType: "news" },
+  { name: "The Guardian", url: "https://www.theguardian.com/football/arsenal/rss", country: "England", contentType: "news" },
   { name: "Arseblog", url: "https://arseblog.com/feed/", country: "England", contentType: "blog" },
-  { name: "Sky Sports", url: "https://www.skysports.com/rss/12040", country: "England", contentType: "newspaper" },
-  { name: "Football.London", url: "https://www.football.london/arsenal-fc/?service=rss", country: "England", contentType: "article" },
-  { name: "TEAMtalk", url: "https://www.teamtalk.com/arsenal/feed", country: "England", contentType: "newspaper" },
-  { name: "ESPN FC", url: "https://www.espn.com/espn/rss/soccer/news", country: "USA", contentType: "newspaper" },
+  { name: "Sky Sports", url: "https://www.skysports.com/rss/12040", country: "England", contentType: "news" },
+  { name: "Football.London", url: "https://www.football.london/arsenal-fc/?service=rss", country: "England", contentType: "news" },
+  { name: "TEAMtalk", url: "https://www.teamtalk.com/arsenal/feed", country: "England", contentType: "news" },
+  { name: "ESPN FC", url: "https://www.espn.com/espn/rss/soccer/news", country: "USA", contentType: "news" },
   { name: "101 Great Goals", url: "https://www.101greatgoals.com/feed/", country: "England", contentType: "blog" },
-  { name: "FourFourTwo", url: "https://www.fourfourtwo.com/feeds/all", country: "England", contentType: "article" },
+  { name: "FourFourTwo", url: "https://www.fourfourtwo.com/feeds/all", country: "England", contentType: "news" },
 ];
 
 const ARSENAL_KEYWORDS = ["arsenal", "gunners", "arteta", "emirates stadium", "saka", "rice", "odegaard", "saliba", "havertz", "gyokeres", "raya"];
@@ -92,12 +95,41 @@ async function crawlRSSFeed(source: RSSSource): Promise<StoredContent[]> {
       const link = typeof item.link === "string" ? item.link
         : item.link?.["@_href"] ?? item.link?.href ?? source.url;
 
-      // Estimate word count from full article content if available
+      // Detect actual content type from RSS item metadata
+      let actualContentType = source.contentType;
+      const enclosureType = item.enclosure?.["@_type"] ?? "";
+      const itunesDuration = item["itunes:duration"];
+      const titleLower = title.toLowerCase();
+
+      if (enclosureType.startsWith("audio/") || itunesDuration != null || titleLower.includes("podcast") || titleLower.includes("🎧") || titleLower.includes("arsecast") || titleLower.includes("episode")) {
+        actualContentType = "podcast";
+      } else if (enclosureType.startsWith("video/") || titleLower.includes("highlights") || titleLower.includes("watch:")) {
+        actualContentType = "video";
+      }
+
+      // Estimate word count / duration based on actual content type
       const bodyHtml = String(item["content:encoded"] ?? item.description ?? "");
       const wordCount = estimateWordCount(bodyHtml);
-      const realisticWordCount = Math.max(wordCount, 400); // Minimum 400 words for a real article
+      const realisticWordCount = Math.max(wordCount, 400);
 
-      const durationLabel = computeDurationLabel(source.contentType, realisticWordCount);
+      // For podcasts, try to get duration from metadata
+      let podcastSeconds: number | undefined;
+      if (actualContentType === "podcast" && itunesDuration) {
+        const dur = String(itunesDuration).trim();
+        if (/^\d+$/.test(dur)) podcastSeconds = parseInt(dur, 10);
+        else {
+          const parts = dur.split(":").map(Number);
+          if (parts.length === 3) podcastSeconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+          else if (parts.length === 2) podcastSeconds = parts[0] * 60 + parts[1];
+        }
+      }
+
+      const durationLabel = actualContentType === "podcast"
+        ? computeDurationLabel("podcast", undefined, podcastSeconds ?? 1800)
+        : actualContentType === "video"
+        ? computeDurationLabel("video", undefined, 300)
+        : computeDurationLabel(actualContentType, realisticWordCount);
+
       const transfer = classifyTransferItem(title, description);
 
       results.push({
@@ -109,7 +141,7 @@ async function crawlRSSFeed(source: RSSSource): Promise<StoredContent[]> {
         publicationDate: pubDate.toISOString(),
         sourceName: source.name,
         sourceCountry: source.country,
-        contentType: source.contentType,
+        contentType: actualContentType,
         durationLabel,
         isTransfer: transfer !== null,
         transferType: transfer?.transferType ?? null,
@@ -153,7 +185,7 @@ async function crawlAllFeeds(): Promise<StoredContent[]> {
 // Inline the functions to avoid cross-package import issues with ts-node
 const READING_RATE_WPM = 200;
 function computeDurationLabel(contentType: string, rawWordCount?: number, rawDurationSeconds?: number): string {
-  const textTypes = ["article", "blog", "newspaper"];
+  const textTypes = ["news", "blog"];
   if (textTypes.includes(contentType)) {
     if (rawWordCount != null && rawWordCount > 0) return `${Math.ceil(rawWordCount / READING_RATE_WPM)} min read`;
     return "Duration unknown";
@@ -476,7 +508,7 @@ function seedSampleData(): void {
 }
 
 // ========== REAL Premier League Standings — April 2026 ==========
-const sampleStandings: StandingsEntry[] = [
+let sampleStandings: StandingsEntry[] = [
   { competition: "Premier League", position: 1, teamName: "Arsenal", matchesPlayed: 31, wins: 21, draws: 7, losses: 3, goalsFor: 61, goalsAgainst: 22, goalDifference: 39, points: 70, recentForm: ["W","W","W","W","D"] },
   { competition: "Premier League", position: 2, teamName: "Man City", matchesPlayed: 30, wins: 18, draws: 7, losses: 5, goalsFor: 60, goalsAgainst: 28, goalDifference: 32, points: 61, recentForm: ["D","D","W","W","W"] },
   { competition: "Premier League", position: 3, teamName: "Man United", matchesPlayed: 31, wins: 15, draws: 10, losses: 6, goalsFor: 56, goalsAgainst: 43, goalDifference: 13, points: 55, recentForm: ["D","W","L","W","W"] },
@@ -500,7 +532,7 @@ const sampleStandings: StandingsEntry[] = [
 ];
 
 // ========== REAL Upcoming Fixtures — April 2026 ==========
-const sampleSchedule: (MatchState & { competition: string; venue: string; kickoffTime: string })[] = [
+let sampleSchedule: (MatchState & { competition: string; venue: string; kickoffTime: string })[] = [
   { matchId: "f1", homeTeam: "Arsenal", awayTeam: "Bournemouth", homeScore: 0, awayScore: 0, matchMinute: 0, status: "scheduled", events: [], competition: "Premier League", venue: "Emirates Stadium", kickoffTime: "2026-04-11T14:30:00Z" },
   { matchId: "f2", homeTeam: "Arsenal", awayTeam: "Sporting CP", homeScore: 0, awayScore: 0, matchMinute: 0, status: "scheduled", events: [], competition: "Champions League QF 2nd Leg", venue: "Emirates Stadium", kickoffTime: "2026-04-15T19:00:00Z" },
   { matchId: "f3", homeTeam: "Man City", awayTeam: "Arsenal", homeScore: 0, awayScore: 0, matchMinute: 0, status: "scheduled", events: [], competition: "Premier League", venue: "Etihad Stadium", kickoffTime: "2026-04-19T15:30:00Z" },
@@ -636,11 +668,106 @@ async function startServer() {
     seedSampleData();
   }
 
+  // ========== Auto-Refresh: News & Transfers (every 15 minutes) ==========
+  const NEWS_REFRESH_MS = 15 * 60 * 1000;
+  async function refreshNews() {
+    console.log(`\n[${new Date().toLocaleTimeString()}] Refreshing news feeds...`);
+    const fresh = await crawlAllFeeds();
+    if (fresh.length > 0) {
+      contentItems.length = 0; // Clear old
+      contentItems.push(...fresh);
+      console.log(`[${new Date().toLocaleTimeString()}] Refreshed: ${fresh.length} articles`);
+    }
+  }
+  setInterval(refreshNews, NEWS_REFRESH_MS);
+
+  // ========== Auto-Refresh: Standings & Schedule (every 2 hours) ==========
+  const FOOTBALL_API_KEY = process.env.FOOTBALL_DATA_API_KEY ?? "";
+  const DATA_REFRESH_MS = 2 * 60 * 60 * 1000;
+
+  async function refreshFootballData() {
+    if (!FOOTBALL_API_KEY) {
+      console.log(`[${new Date().toLocaleTimeString()}] Skipping football data refresh (no API key)`);
+      return;
+    }
+
+    console.log(`[${new Date().toLocaleTimeString()}] Refreshing standings & schedule from football-data.org...`);
+
+    try {
+      // Fetch standings
+      const standingsRes = await fetch("https://api.football-data.org/v4/competitions/2021/standings", {
+        headers: { "X-Auth-Token": FOOTBALL_API_KEY },
+        signal: AbortSignal.timeout(10000),
+      });
+      if (standingsRes.ok) {
+        const data = await standingsRes.json() as any;
+        const table = data.standings?.[0]?.table ?? [];
+        const freshStandings: StandingsEntry[] = table.map((row: any) => ({
+          competition: "Premier League",
+          position: row.position,
+          teamName: row.team.name,
+          matchesPlayed: row.playedGames,
+          wins: row.won,
+          draws: row.draw,
+          losses: row.lost,
+          goalsFor: row.goalsFor,
+          goalsAgainst: row.goalsAgainst,
+          goalDifference: row.goalDifference,
+          points: row.points,
+          recentForm: row.form ? row.form.split(",").slice(0, 5) : [],
+        }));
+        if (freshStandings.length > 0) {
+          sampleStandings = freshStandings;
+          console.log(`[${new Date().toLocaleTimeString()}] Standings updated: ${freshStandings.length} teams`);
+        }
+      }
+    } catch (err) {
+      console.warn(`[${new Date().toLocaleTimeString()}] Standings refresh failed: ${err instanceof Error ? err.message : err}`);
+    }
+
+    try {
+      // Fetch upcoming matches
+      const matchesRes = await fetch("https://api.football-data.org/v4/teams/57/matches?status=SCHEDULED,TIMED&limit=10", {
+        headers: { "X-Auth-Token": FOOTBALL_API_KEY },
+        signal: AbortSignal.timeout(10000),
+      });
+      if (matchesRes.ok) {
+        const data = await matchesRes.json() as any;
+        const matches = (data.matches ?? []).map((m: any) => ({
+          matchId: String(m.id),
+          homeTeam: m.homeTeam.shortName ?? m.homeTeam.name,
+          awayTeam: m.awayTeam.shortName ?? m.awayTeam.name,
+          homeScore: 0,
+          awayScore: 0,
+          matchMinute: 0,
+          status: "scheduled" as const,
+          events: [],
+          competition: m.competition.name,
+          venue: m.venue ?? "TBD",
+          kickoffTime: m.utcDate,
+        }));
+        if (matches.length > 0) {
+          sampleSchedule = matches;
+          console.log(`[${new Date().toLocaleTimeString()}] Schedule updated: ${matches.length} upcoming matches`);
+        }
+      }
+    } catch (err) {
+      console.warn(`[${new Date().toLocaleTimeString()}] Schedule refresh failed: ${err instanceof Error ? err.message : err}`);
+    }
+  }
+
+  // Run football data refresh once at startup, then on interval
+  await refreshFootballData();
+  setInterval(refreshFootballData, DATA_REFRESH_MS);
+
   app.listen(PORT, () => {
     console.log(`\n=== Arsenal News Aggregator — Local Dev Server ===`);
     console.log(`API: http://localhost:${PORT}`);
     console.log(`Mode: ${liveItems.length > 0 ? "LIVE RSS feeds" : "Sample data"}`);
-    console.log(`\n${contentItems.length} articles | 6 fixtures | 20 teams in standings`);
+    console.log(`\nAuto-refresh:`);
+    console.log(`  News & Transfers: every 15 minutes`);
+    console.log(`  Standings & Schedule: every 2 hours${FOOTBALL_API_KEY ? "" : " (skipped — no API key)"}`);
+    console.log(`\n${contentItems.length} articles | ${sampleSchedule.length} fixtures | ${sampleStandings.length} teams in standings`);
   });
 }
 

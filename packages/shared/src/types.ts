@@ -1,5 +1,5 @@
 /** Valid content types for aggregated items */
-export type ContentType = "article" | "blog" | "newspaper" | "podcast" | "video";
+export type ContentType = "news" | "blog" | "podcast" | "video";
 
 /** Valid transfer item classifications */
 export type TransferType =

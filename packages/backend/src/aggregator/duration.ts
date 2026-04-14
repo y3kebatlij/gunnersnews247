@@ -19,7 +19,7 @@ export function computeDurationLabel(
   rawWordCount?: number,
   rawDurationSeconds?: number
 ): string {
-  const textTypes: ContentType[] = ["article", "blog", "newspaper"];
+  const textTypes: ContentType[] = ["news", "blog"];
 
   if (textTypes.includes(contentType)) {
     if (rawWordCount != null && rawWordCount > 0) {

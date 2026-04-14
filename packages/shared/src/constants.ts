@@ -2,9 +2,8 @@ import type { ContentType, TransferType, MatchEventType } from "./types";
 
 /** All valid content types (Req 1.3) */
 export const CONTENT_TYPES: readonly ContentType[] = [
-  "article",
+  "news",
   "blog",
-  "newspaper",
   "podcast",
   "video",
 ] as const;
