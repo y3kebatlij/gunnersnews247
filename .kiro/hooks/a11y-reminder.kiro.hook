@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Accessibility Compliance Reminder",
+  "description": "When a new TSX component file is created, reminds to include ARIA labels, keyboard navigation, semantic HTML, and Section 508 accessibility compliance per frontend steering.",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": [
+      "*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new React component was just created. Per frontend steering, ensure it includes: ARIA labels on interactive elements, keyboard navigation support, semantic HTML (nav/main/section/button not div), associated labels on form inputs, and sufficient color contrast. Review the component and flag any accessibility gaps."
+  }
+}

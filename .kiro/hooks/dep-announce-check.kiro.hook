@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Dependency Change Announcement",
+  "description": "When package.json is edited, reminds to document any dependency additions or removals in the commit message per the supply chain management rules.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/package.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A package.json was just modified. Check what dependencies changed. Remind the user that per architecture steering Rule 4, every dependency addition/removal must be explicitly announced in the commit message with the package name, version, and justification."
+  }
+}

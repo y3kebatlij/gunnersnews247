@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Semgrep Security Scan",
+  "description": "Runs Semgrep static analysis on TypeScript files when saved, checking for security, correctness, and performance issues per OWASP Top 10 and default rulesets.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.ts",
+      "*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A TypeScript file was just saved. If Semgrep is available (.venv/bin/semgrep), run it on the changed file with p/default and p/owasp-top-ten rulesets. Report any findings and suggest fixes. If Semgrep is not installed, skip silently."
+  }
+}

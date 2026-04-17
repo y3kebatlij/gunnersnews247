@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "TypeScript Type Check",
+  "description": "Runs TypeScript type checking after editing TS/TSX files to catch type errors early, especially any usage that violates the no-any rule from frontend steering.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.ts",
+      "*.tsx"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "npx tsc --noEmit 2>&1 | head -20",
+    "timeout": 30
+  }
+}
