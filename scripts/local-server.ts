@@ -631,6 +631,46 @@ app.get("/match/:id/timeline", (req, res) => {
   }
 });
 
+// ========== Digest Preview ==========
+app.get("/digest-preview", (_req, res) => {
+  const today = new Date().toISOString().split("T")[0];
+  const items = contentItems.slice(0, 20);
+
+  const itemsHtml = items.map(item => `
+    <tr>
+      <td style="padding:12px;border-bottom:1px solid #2A3A5C;">
+        <a href="${item.sourceUrl}" style="color:#73B3E7;font-weight:bold;text-decoration:none;">${item.title}</a>
+        <span style="color:#9C824A;font-size:0.85em;"> (${item.durationLabel})</span>
+        <br/>
+        <span style="color:#A0AEC0;font-size:0.85em;">${item.sourceName} · ${item.sourceCountry} · ${item.contentType}</span>
+        <br/>
+        <span style="color:#E8E8E8;font-size:0.95em;">${item.summary}</span>
+      </td>
+    </tr>`).join("");
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><title>Arsenal Daily Digest — ${today}</title></head>
+<body style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#1A1A2E;color:#E8E8E8;">
+  <div style="background:#EF0107;color:#fff;padding:16px;text-align:center;border-radius:8px 8px 0 0;">
+    <h1 style="margin:0;font-size:24px;">⚽ Arsenal Daily Digest</h1>
+    <p style="margin:4px 0 0;font-size:14px;">${today} — ${items.length} stories</p>
+  </div>
+  <div style="background:#1F2B47;padding:16px;border-radius:0 0 8px 8px;">
+    <table style="width:100%;border-collapse:collapse;">${itemsHtml}</table>
+  </div>
+  <hr style="margin-top:24px;border:none;border-top:1px solid #2A3A5C;"/>
+  <p style="font-size:12px;color:#A0AEC0;text-align:center;">
+    You're receiving this because you subscribed to the Arsenal Daily Digest.<br/>
+    <a href="#" style="color:#73B3E7;">Unsubscribe</a>
+  </p>
+</body>
+</html>`;
+
+  res.header("Content-Type", "text/html");
+  res.send(html);
+});
+
 app.post("/subscribe", (req, res) => {
   const { email } = req.body;
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

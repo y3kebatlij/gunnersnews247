@@ -10,6 +10,7 @@ import { ScheduleView } from "./components/ScheduleView";
 import { StandingsTable } from "./components/StandingsTable";
 import { BookmarkList } from "./components/BookmarkList";
 import { NotificationBanner } from "./components/NotificationBanner";
+import { DigestPreview } from "./components/DigestPreview";
 
 export function App() {
   return (
@@ -27,6 +28,7 @@ export function App() {
                   <Route path="/schedule" element={<ScheduleView />} />
                   <Route path="/standings" element={<StandingsTable />} />
                   <Route path="/saved" element={<BookmarkList />} />
+                  <Route path="/digest" element={<DigestPreview />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </div>
