@@ -87,11 +87,11 @@ function guessTransferType(text: string): string {
 }
 
 async function fetchRSSItems(source: { url: string; name: string; country: string; type?: string }): Promise<any[]> {
-  const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(source.url)}`;
-  const res = await fetch(proxy);
+  const proxyUrl = `https://arsenal-proxy.eyuelkt.workers.dev/rss?url=${encodeURIComponent(source.url)}`;
+  const res = await fetch(proxyUrl);
   if (!res.ok) return [];
-  const json = await res.json();
-  const xml = new DOMParser().parseFromString(json.contents, "text/xml");
+  const text = await res.text();
+  const xml = new DOMParser().parseFromString(text, "text/xml");
   return Array.from(xml.querySelectorAll("item")).map((item, i) => ({
     i,
     title: item.querySelector("title")?.textContent?.trim() ?? "",
