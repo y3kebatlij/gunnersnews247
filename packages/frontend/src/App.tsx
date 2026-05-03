@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import { WebSocketProvider } from "./context/WebSocketContext";
@@ -11,8 +11,29 @@ import { StandingsTable } from "./components/StandingsTable";
 import { BookmarkList } from "./components/BookmarkList";
 import { NotificationBanner } from "./components/NotificationBanner";
 import { DigestPreview } from "./components/DigestPreview";
-
 import { NotFoundPage } from "./components/NotFoundPage";
+import { fetchArsenalNews, fetchArsenalTransfers } from "./services/newsService";
+import { fetchArsenalFixtures, fetchArsenalResults, fetchPremierLeagueStandings, fetchTopScorers } from "./services/footballService";
+
+function Preloader() {
+  useEffect(() => {
+    // Preload all data in background on app start
+    const preload = async () => {
+      try {
+        await Promise.allSettled([
+          fetchArsenalNews(),
+          fetchArsenalTransfers(),
+          fetchArsenalFixtures(),
+          fetchArsenalResults(),
+          fetchPremierLeagueStandings(),
+          fetchTopScorers(),
+        ]);
+      } catch {}
+    };
+    preload();
+  }, []);
+  return null;
+}
 
 export function App() {
   return (
@@ -20,6 +41,7 @@ export function App() {
       <ThemeProvider>
         <WebSocketProvider>
           <div className="usa-layout-docs">
+            <Preloader />
             <Header />
             <main className="usa-section" id="main-content">
               <div className="grid-container">
