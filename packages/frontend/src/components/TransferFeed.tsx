@@ -10,7 +10,13 @@ const ALL_TYPES = [
   { value: "departure", label: "Departures" },
 ];
 
-const CONFIRMED_TYPES = ["confirmed_signing", "loan", "contract_extension", "departure"];
+const TYPE_COLORS: Record<string, string> = {
+  rumor: "#9C824A",
+  confirmed_signing: "#2E8540",
+  loan: "#1e3a8a",
+  contract_extension: "#5b21b6",
+  departure: "#EF0107",
+};
 
 function transferLabel(type: string): string {
   const labels: Record<string, string> = {
@@ -23,10 +29,9 @@ function transferLabel(type: string): string {
   return labels[type] ?? type;
 }
 
-function timeAgoShort(dateStr: string): string {
+function timeAgo(dateStr: string): string {
   const diffMs = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diffMs / 60000);
-  if (mins < 1) return "just now";
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}h ago`;
@@ -50,53 +55,28 @@ export function TransferFeed() {
   return (
     <section aria-label="Transfer news">
       <h2 className="usa-heading">Transfer News</h2>
-      <div className="filter-type-row" role="group" aria-label="Transfer type filter">
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
         {ALL_TYPES.map(({ value, label }) => (
-          <button
-            key={value}
-            className={`filter-chip ${filter === value ? "filter-chip--active" : ""}`}
-            onClick={() => setFilter(value)}
-            aria-pressed={filter === value}
-            type="button"
-          >
-            {label}
-          </button>
+          <button key={value} className={`filter-chip ${filter === value ? "filter-chip--active" : ""}`} onClick={() => setFilter(value)} aria-pressed={filter === value} type="button">{label}</button>
         ))}
       </div>
       {loading && <p>Loading transfer news...</p>}
-      {error && (
-        <div className="usa-alert usa-alert--error" role="alert">
-          <div className="usa-alert__body"><p className="usa-alert__text">{error}</p></div>
-        </div>
-      )}
+      {error && <p style={{ color: "#EF0107" }}>{error}</p>}
       {!loading && !error && displayed.length === 0 && (
-        <p>{filter ? `No ${filter.replace("_", " ")} transfers found.` : "No transfer activity found. Check back soon."}</p>
+        <p style={{ color: "#9CA3AF" }}>{filter ? `No ${filter.replace("_", " ")} transfers found.` : "No transfer activity found. Check back soon."}</p>
       )}
-      <ul className="usa-list usa-list--unstyled">
-        {displayed.map((item) => {
-          const isConfirmed = CONFIRMED_TYPES.includes(item.transferType);
-          return (
-            <li key={item.contentId} className="usa-card__container margin-bottom-2">
-              <div className="usa-card__body">
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                  <span className={`usa-tag ${isConfirmed ? "bg-green" : "bg-gold"}`}>
-                    {transferLabel(item.transferType)}
-                  </span>
-                  <span className="text-base-dark font-sans-3xs">
-                    {item.sourceName} · {timeAgoShort(item.publicationDate)}
-                  </span>
-                </div>
-                <h3 style={{ margin: "0 0 0.5rem 0" }}>
-                  <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="usa-link">
-                    {item.title}
-                  </a>
-                </h3>
-                <p style={{ margin: 0 }}>{item.summary}</p>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        {displayed.map((item) => (
+          <div key={item.contentId} style={{ background: "#1e3a5f", borderRadius: "8px", padding: "1rem 1.25rem", borderLeft: `4px solid ${TYPE_COLORS[item.transferType] ?? "#EF0107"}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
+              <span style={{ background: TYPE_COLORS[item.transferType] ?? "#EF0107", color: "white", padding: "2px 10px", borderRadius: "12px", fontSize: "0.78rem", fontWeight: "bold" }}>{transferLabel(item.transferType)}</span>
+              <span style={{ fontSize: "0.78rem", color: "#9CA3AF" }}>{item.sourceName} Â· {timeAgo(item.publicationDate)}</span>
+            </div>
+            <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="usa-link" style={{ fontWeight: "bold", fontSize: "1rem", display: "block", marginBottom: "0.4rem" }}>{item.title}</a>
+            <p style={{ margin: 0, fontSize: "0.88rem", color: "#CBD5E1", lineHeight: "1.5" }}>{item.summary}</p>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

@@ -8,13 +8,19 @@ export function DigestPreview() {
 
   useEffect(() => {
     fetchArsenalNews()
-      .then(data => { setArticles(data.slice(0, 8)); setLoading(false); })
+      .then(data => {
+        const fiveHoursAgo = Date.now() - 5 * 60 * 60 * 1000;
+        const recent = data.filter(a => {
+          if (!a.publicationDate) return false;
+          return new Date(a.publicationDate).getTime() > fiveHoursAgo;
+        }).slice(0, 8);
+        setArticles(recent);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }, []);
 
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric"
-  });
+  const today = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
   return (
     <section aria-label="Daily digest preview">
@@ -27,23 +33,19 @@ export function DigestPreview() {
         <SubscribeForm />
       </div>
       <div style={{ marginTop: "2rem" }}>
-        <h3 style={{ borderBottom: "2px solid #EF0107", paddingBottom: "0.5rem" }}>
-          {"Arsenal Daily Digest - " + today}
-        </h3>
-        <p style={{ color: "#9CA3AF", fontSize: "0.9rem" }}>
-          Here is what subscribers will receive at 9:00 AM EST today:
-        </p>
+        <h3 style={{ borderBottom: "2px solid #EF0107", paddingBottom: "0.5rem" }}>{"Arsenal Daily Digest - " + today}</h3>
+        <p style={{ color: "#9CA3AF", fontSize: "0.9rem" }}>Latest Arsenal news from the past 5 hours:</p>
         {loading && <p>Loading digest...</p>}
-        {!loading && articles.length === 0 && <p>No articles available yet.</p>}
+        {!loading && articles.length === 0 && <p style={{ color: "#9CA3AF" }}>No new articles in the last 5 hours. Check back soon!</p>}
         {!loading && articles.length > 0 && (
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {articles.map((article) => (
-              <li key={article.contentId} style={{ marginBottom: "1.5rem", borderBottom: "1px solid #1e3a5f", paddingBottom: "1rem" }}>
-                <a href={article.sourceUrl} target="_blank" rel="noopener noreferrer" className="usa-link" style={{ fontWeight: "bold" }}>
-                  {article.title}
-                </a>
-                <p style={{ margin: "0.25rem 0", fontSize: "0.9rem" }}>{article.summary}</p>
-                <span style={{ fontSize: "0.8rem", color: "#9CA3AF" }}>{article.sourceName}</span>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {articles.map((article, i) => (
+              <li key={article.contentId} style={{ display: "flex", gap: "1rem", padding: "0.85rem 0", borderBottom: "1px solid #1e3a5f", alignItems: "flex-start" }}>
+                <span style={{ color: "#EF0107", fontWeight: "bold", fontSize: "1rem", minWidth: "24px" }}>{i + 1}.</span>
+                <div>
+                  <a href={article.sourceUrl} target="_blank" rel="noopener noreferrer" className="usa-link" style={{ fontWeight: "bold", fontSize: "0.95rem" }}>{article.title}</a>
+                  <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.85rem", color: "#9CA3AF" }}>{article.sourceName} · {article.publicationDate ? new Date(article.publicationDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}</p>
+                </div>
               </li>
             ))}
           </ul>
