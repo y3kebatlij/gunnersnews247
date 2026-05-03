@@ -42,7 +42,7 @@ export function AudioSummary() {
       const preferred = voices.find(v => v.lang === "en-GB") || voices.find(v => v.lang.startsWith("en"));
       if (preferred) utt.voice = preferred;
       utt.onend = () => setState("idle");
-      utt.onerror = () => setState("error");
+      utt.onerror = (e) => { if (e.error !== "interrupted") setState("error"); };
       setUtterance(utt);
       window.speechSynthesis.speak(utt);
       setState("playing");
