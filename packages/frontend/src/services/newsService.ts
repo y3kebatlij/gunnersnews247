@@ -47,10 +47,12 @@ const RSS_SOURCES = [
   { url: "https://www.espn.com/espn/rss/soccer/news", name: "ESPN FC", country: "USA", type: "news" },
   { url: "https://arseblog.com/feed/", name: "Arseblog", country: "England", type: "blog" },
   { url: "https://www.justarsenal.com/feed", name: "Just Arsenal", country: "England", type: "blog" },
-  { url: "https://arseblog.com/arseblog-news/feed/", name: "Arseblog News", country: "England", type: "blog" },
-  { url: "https://www.arsenalstation.com/feed/", name: "Arsenal Station", country: "England", type: "blog" },
-  { url: "https://www.podbean.com/site/podcatcher/index/blog/0Gg4B1tjBJJB", name: "Arsecast", country: "England", type: "podcast" },
-  { url: "https://feeds.megaphone.fm/STU4418364045", name: "The Athletic Arsenal", country: "England", type: "podcast" },
+  { url: "https://paininthearsenal.com/feed", name: "Pain in the Arsenal", country: "England", type: "blog" },
+  { url: "https://le-grove.co.uk/feed", name: "Le Grove", country: "England", type: "blog" },
+  { url: "https://goonerdaily.com/feed", name: "Gooner Daily", country: "England", type: "blog" },
+  { url: "https://arseblog.com/category/arsecast/feed/", name: "Arsecast", country: "England", type: "podcast" },
+  { url: "https://feeds.feedburner.com/HandbrakeFc", name: "Handbrake FC", country: "England", type: "podcast" },
+  { url: "https://feeds.feedburner.com/ArsenalYouTube", name: "Arsenal YouTube", country: "England", type: "video" },
 ];
 
 const TRANSFER_SOURCES = [
@@ -58,7 +60,9 @@ const TRANSFER_SOURCES = [
   { url: "https://feeds.bbci.co.uk/sport/football/rss.xml", name: "BBC Sport", country: "England" },
   { url: "https://www.theguardian.com/football/transfers/rss", name: "The Guardian", country: "England" },
   { url: "https://arseblog.com/feed/", name: "Arseblog", country: "England" },
+  { url: "https://paininthearsenal.com/feed", name: "Pain in the Arsenal", country: "England" },
   { url: "https://www.justarsenal.com/feed", name: "Just Arsenal", country: "England" },
+  { url: "https://le-grove.co.uk/feed", name: "Le Grove", country: "England" },
 ];
 
 const TRANSFER_KEYWORDS = ["transfer", "sign", "signing", "deal", "loan", "depart", "exit", "bid", "fee", "contract", "extension", "rumour", "rumor", "target", "move", "linked", "interest"];
