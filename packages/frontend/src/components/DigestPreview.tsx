@@ -8,10 +8,7 @@ export function DigestPreview() {
 
   useEffect(() => {
     fetchArsenalNews()
-      .then(data => {
-        setArticles(data.slice(0, 8));
-        setLoading(false);
-      })
+      .then(data => { setArticles(data.slice(0, 8)); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
@@ -29,24 +26,18 @@ export function DigestPreview() {
         </div>
         <SubscribeForm />
       </div>
-
       <div style={{ marginTop: "2rem" }}>
         <h3 style={{ borderBottom: "2px solid #EF0107", paddingBottom: "0.5rem" }}>
-          Arsenal Daily Digest — {today}
+          Arsenal Daily Digest - {today}
         </h3>
         <p style={{ color: "#9CA3AF", fontSize: "0.9rem" }}>
           Here is what subscribers will receive at 9:00 AM EST today:
         </p>
-
-        {loading && <p>Loading today's digest...</p>}
-
-        {!loading && articles.length === 0 && (
-          <p>No articles available for today's digest yet.</p>
-        )}
-
+        {loading && <p>Loading today digest...</p>}
+        {!loading && articles.length === 0 && <p>No articles available yet.</p>}
         {!loading && articles.length > 0 && (
           <ol style={{ paddingLeft: "1.5rem" }}>
-            {articles.map((article, i) => (
+            {articles.map((article) => (
               <li key={article.contentId} style={{ marginBottom: "1.5rem" }}>
                 
                   href={article.sourceUrl}
@@ -59,9 +50,7 @@ export function DigestPreview() {
                 </a>
                 <p style={{ margin: "0.25rem 0", fontSize: "0.9rem" }}>{article.summary}</p>
                 <span style={{ fontSize: "0.8rem", color: "#9CA3AF" }}>
-                  {article.sourceName} · {article.publicationDate
-                    ? new Date(article.publicationDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                    : ""}
+                  {article.sourceName}
                 </span>
               </li>
             ))}
