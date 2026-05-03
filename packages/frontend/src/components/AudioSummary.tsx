@@ -81,7 +81,7 @@ export function AudioSummary() {
       <div className="audio-summary__controls" style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
         {state === "idle" && (
           <button className="usa-button audio-summary__btn" onClick={handleGenerate} type="button">
-            ? Generate Briefing
+            Play Briefing
           </button>
         )}
         {state === "loading" && (

@@ -44,11 +44,13 @@ const RSS_SOURCES = [
   { url: "https://feeds.bbci.co.uk/sport/football/rss.xml", name: "BBC Sport", country: "England", type: "news" },
   { url: "https://www.skysports.com/rss/12040", name: "Sky Sports", country: "England", type: "news" },
   { url: "https://www.theguardian.com/football/arsenal/rss", name: "The Guardian", country: "England", type: "news" },
+  { url: "https://www.espn.com/espn/rss/soccer/news", name: "ESPN FC", country: "USA", type: "news" },
   { url: "https://arseblog.com/feed/", name: "Arseblog", country: "England", type: "blog" },
   { url: "https://www.justarsenal.com/feed", name: "Just Arsenal", country: "England", type: "blog" },
   { url: "https://arseblog.com/arseblog-news/feed/", name: "Arseblog News", country: "England", type: "blog" },
-  { url: "https://feeds.feedburner.com/ArsenalYouTube", name: "Arsenal FC", country: "England", type: "video" },
-  { url: "https://www.rss.com/podcasts/handbrake-fc/feed/", name: "Handbrake FC", country: "England", type: "podcast" },
+  { url: "https://www.arsenalstation.com/feed/", name: "Arsenal Station", country: "England", type: "blog" },
+  { url: "https://www.podbean.com/site/podcatcher/index/blog/0Gg4B1tjBJJB", name: "Arsecast", country: "England", type: "podcast" },
+  { url: "https://feeds.megaphone.fm/STU4418364045", name: "The Athletic Arsenal", country: "England", type: "podcast" },
 ];
 
 const TRANSFER_SOURCES = [
