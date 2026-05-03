@@ -71,7 +71,7 @@ export function AudioSummary() {
   return (
     <section className="audio-summary" aria-label="Daily audio briefing">
       <div className="audio-summary__header">
-        <span className="audio-summary__icon" aria-hidden="true">??</span>
+        <span className="audio-summary__icon" aria-hidden="true">mic</span>
         <h3 className="audio-summary__title">Daily Audio Briefing</h3>
         <span className="audio-summary__badge">~30 sec</span>
       </div>
@@ -95,7 +95,7 @@ export function AudioSummary() {
               ? Pause
             </button>
             <button className="usa-button usa-button--outline audio-summary__btn" onClick={handleStop} type="button">
-              ¦ Stop
+              ï¿½ Stop
             </button>
           </>
         )}
@@ -105,7 +105,7 @@ export function AudioSummary() {
               ? Resume
             </button>
             <button className="usa-button usa-button--outline audio-summary__btn" onClick={handleStop} type="button">
-              ¦ Stop
+              ï¿½ Stop
             </button>
           </>
         )}
