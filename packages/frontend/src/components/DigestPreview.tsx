@@ -1,27 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SubscribeForm } from "./SubscribeForm";
+import { fetchArsenalNews, ContentItem } from "../services/newsService";
 
 export function DigestPreview() {
+  const [articles, setArticles] = useState<ContentItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchArsenalNews()
+      .then(data => {
+        setArticles(data.slice(0, 8));
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric"
+  });
+
   return (
     <section aria-label="Daily digest preview">
       <h2 className="usa-heading">Daily Digest Preview</h2>
       <div className="digest-cta">
         <div className="digest-cta__text">
-          <h3 className="digest-cta__title">mail Get this in your inbox every morning</h3>
+          <h3 className="digest-cta__title">Get this in your inbox every morning</h3>
           <p className="digest-cta__desc">Subscribe to receive the Arsenal Daily Digest at 9:00 AM EST. Free, no spam, unsubscribe anytime.</p>
         </div>
         <SubscribeForm />
       </div>
-      <div className="usa-alert usa-alert--info" style={{ marginTop: "2rem" }}>
-        <div className="usa-alert__body">
-          <h3 className="usa-alert__heading">Digest Preview Coming Soon</h3>
-          <p className="usa-alert__text">
-            The daily email digest feature is currently being set up. Subscribe above and you'll be notified as soon as it launches!
-          </p>
-        </div>
+
+      <div style={{ marginTop: "2rem" }}>
+        <h3 style={{ borderBottom: "2px solid #EF0107", paddingBottom: "0.5rem" }}>
+          Arsenal Daily Digest — {today}
+        </h3>
+        <p style={{ color: "#9CA3AF", fontSize: "0.9rem" }}>
+          Here is what subscribers will receive at 9:00 AM EST today:
+        </p>
+
+        {loading && <p>Loading today's digest...</p>}
+
+        {!loading && articles.length === 0 && (
+          <p>No articles available for today's digest yet.</p>
+        )}
+
+        {!loading && articles.length > 0 && (
+          <ol style={{ paddingLeft: "1.5rem" }}>
+            {articles.map((article, i) => (
+              <li key={article.contentId} style={{ marginBottom: "1.5rem" }}>
+                
+                  href={article.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="usa-link"
+                  style={{ fontWeight: "bold", fontSize: "1rem" }}
+                >
+                  {article.title}
+                </a>
+                <p style={{ margin: "0.25rem 0", fontSize: "0.9rem" }}>{article.summary}</p>
+                <span style={{ fontSize: "0.8rem", color: "#9CA3AF" }}>
+                  {article.sourceName} · {article.publicationDate
+                    ? new Date(article.publicationDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                    : ""}
+                </span>
+              </li>
+            ))}
+          </ol>
+        )}
       </div>
     </section>
   );
 }
-
-

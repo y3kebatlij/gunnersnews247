@@ -6,7 +6,8 @@ import { LoadingSkeleton } from "./LoadingSkeleton";
 import { ErrorRetry } from "./ErrorRetry";
 import { fetchArsenalNews, ContentItem } from "../services/newsService";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 10;
+const MAX_ARTICLES = 25;
 
 function timeAgoShort(date: Date): string {
   const diffMs = Date.now() - date.getTime();
@@ -30,7 +31,7 @@ export function ContentFeed() {
     setError("");
     try {
       const data = await fetchArsenalNews(contentType || undefined);
-      setItems(data);
+      setItems(data.slice(0, MAX_ARTICLES));
       setLastUpdated(new Date());
       setPage(1);
     } catch {
@@ -66,7 +67,7 @@ export function ContentFeed() {
         </p>
         {lastUpdated && (
           <span className="welcome-banner__updated" aria-label="Last updated">
-            ?? Updated {timeAgoShort(lastUpdated)}
+            Updated {timeAgoShort(lastUpdated)}
           </span>
         )}
       </div>
@@ -112,5 +113,3 @@ export function ContentFeed() {
     </section>
   );
 }
-
-
