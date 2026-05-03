@@ -28,33 +28,25 @@ export function DigestPreview() {
       </div>
       <div style={{ marginTop: "2rem" }}>
         <h3 style={{ borderBottom: "2px solid #EF0107", paddingBottom: "0.5rem" }}>
-          Arsenal Daily Digest - {today}
+          {"Arsenal Daily Digest - " + today}
         </h3>
         <p style={{ color: "#9CA3AF", fontSize: "0.9rem" }}>
           Here is what subscribers will receive at 9:00 AM EST today:
         </p>
-        {loading && <p>Loading today digest...</p>}
+        {loading && <p>Loading digest...</p>}
         {!loading && articles.length === 0 && <p>No articles available yet.</p>}
         {!loading && articles.length > 0 && (
-          <ol style={{ paddingLeft: "1.5rem" }}>
+          <ul style={{ listStyle: "none", padding: 0 }}>
             {articles.map((article) => (
-              <li key={article.contentId} style={{ marginBottom: "1.5rem" }}>
-                
-                  href={article.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="usa-link"
-                  style={{ fontWeight: "bold", fontSize: "1rem" }}
-                >
+              <li key={article.contentId} style={{ marginBottom: "1.5rem", borderBottom: "1px solid #1e3a5f", paddingBottom: "1rem" }}>
+                <a href={article.sourceUrl} target="_blank" rel="noopener noreferrer" className="usa-link" style={{ fontWeight: "bold" }}>
                   {article.title}
                 </a>
                 <p style={{ margin: "0.25rem 0", fontSize: "0.9rem" }}>{article.summary}</p>
-                <span style={{ fontSize: "0.8rem", color: "#9CA3AF" }}>
-                  {article.sourceName}
-                </span>
+                <span style={{ fontSize: "0.8rem", color: "#9CA3AF" }}>{article.sourceName}</span>
               </li>
             ))}
-          </ol>
+          </ul>
         )}
       </div>
     </section>
