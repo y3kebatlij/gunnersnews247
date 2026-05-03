@@ -69,12 +69,6 @@ export function Header() {
           </nav>
         </div>
       </header>
-      <div className="subscribe-bar" role="complementary" aria-label="Subscribe to daily digest">
-        <div className="grid-container subscribe-bar__inner">
-          <span className="subscribe-bar__label">Get the Daily Digest — Arsenal news at 9 AM EST</span>
-          <SubscribeForm />
-        </div>
-      </div>
     </>
   );
 }
