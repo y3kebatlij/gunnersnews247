@@ -15,13 +15,10 @@ export function ThemeToggle() {
         padding: "4px 12px",
         cursor: "pointer",
         fontSize: "0.85rem",
-        display: "flex",
-        alignItems: "center",
-        gap: "6px",
         color: "inherit",
       }}
     >
-      {theme === "dark" ? "?? Light" : "?? Dark"}
+      {theme === "dark" ? "Light Mode" : "Dark Mode"}
     </button>
   );
 }
