@@ -1,4 +1,4 @@
-const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+const CACHE_TTL_MS = 15 * 60 * 1000;
 
 function getCached<T>(key: string): T | null {
   try {
@@ -45,15 +45,21 @@ const RSS_SOURCES = [
   { url: "https://www.skysports.com/rss/12040", name: "Sky Sports", country: "England", type: "news" },
   { url: "https://www.theguardian.com/football/arsenal/rss", name: "The Guardian", country: "England", type: "news" },
   { url: "https://arseblog.com/feed/", name: "Arseblog", country: "England", type: "blog" },
+  { url: "https://www.justarsenal.com/feed", name: "Just Arsenal", country: "England", type: "blog" },
+  { url: "https://arseblog.com/arseblog-news/feed/", name: "Arseblog News", country: "England", type: "blog" },
+  { url: "https://feeds.feedburner.com/ArsenalYouTube", name: "Arsenal FC", country: "England", type: "video" },
+  { url: "https://www.rss.com/podcasts/handbrake-fc/feed/", name: "Handbrake FC", country: "England", type: "podcast" },
 ];
 
 const TRANSFER_SOURCES = [
   { url: "https://www.skysports.com/rss/12040", name: "Sky Sports", country: "England" },
   { url: "https://feeds.bbci.co.uk/sport/football/rss.xml", name: "BBC Sport", country: "England" },
   { url: "https://www.theguardian.com/football/transfers/rss", name: "The Guardian", country: "England" },
+  { url: "https://arseblog.com/feed/", name: "Arseblog", country: "England" },
+  { url: "https://www.justarsenal.com/feed", name: "Just Arsenal", country: "England" },
 ];
 
-const TRANSFER_KEYWORDS = ["transfer", "sign", "signing", "deal", "loan", "depart", "exit", "bid", "fee", "contract", "extension", "rumour", "rumor", "target", "move"];
+const TRANSFER_KEYWORDS = ["transfer", "sign", "signing", "deal", "loan", "depart", "exit", "bid", "fee", "contract", "extension", "rumour", "rumor", "target", "move", "linked", "interest"];
 
 function parseRSSDate(dateStr: string | null): string | undefined {
   if (!dateStr) return undefined;
@@ -68,9 +74,9 @@ function estimateDuration(text: string): string {
 function guessTransferType(text: string): string {
   const t = text.toLowerCase();
   if (t.includes("loan")) return "loan";
-  if (t.includes("depart") || t.includes("exit") || t.includes("leav") || t.includes("sold")) return "departure";
+  if (t.includes("depart") || t.includes("exit") || t.includes("leav") || t.includes("sold") || t.includes("release")) return "departure";
   if (t.includes("extension") || t.includes("renew")) return "contract_extension";
-  if (t.includes("sign") || t.includes("complet") || t.includes("confirmed") || t.includes("official")) return "confirmed_signing";
+  if (t.includes("sign") || t.includes("complet") || t.includes("confirmed") || t.includes("official") || t.includes("done deal")) return "confirmed_signing";
   return "rumor";
 }
 
