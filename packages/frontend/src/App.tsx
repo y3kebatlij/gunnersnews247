@@ -36,7 +36,7 @@ function Preloader() {
 
 export function App() {
   return (
-    <BrowserRouter basename="/London49">
+    <BrowserRouter>
       <ThemeProvider>
         <WebSocketProvider>
           <div className="usa-layout-docs">
