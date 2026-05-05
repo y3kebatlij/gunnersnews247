@@ -11,6 +11,7 @@ import { StandingsTable } from "./components/StandingsTable";
 import { BookmarkList } from "./components/BookmarkList";
 import { NotificationBanner } from "./components/NotificationBanner";
 import { DigestPreview } from "./components/DigestPreview";
+import { NotFoundPage } from "./components/NotFoundPage";
 import { WomenFeed } from "./components/WomenFeed";
 import { fetchArsenalNews, fetchArsenalTransfers } from "./services/newsService";
 import { fetchArsenalFixtures, fetchArsenalResults, fetchPremierLeagueStandings, fetchTopScorers } from "./services/footballService";
@@ -47,6 +48,7 @@ export function App() {
                 <Scoreboard />
                 <Routes>
                   <Route path="/" element={<ContentFeed />} />
+                  <Route path="/London49/" element={<ContentFeed />} />
                   <Route path="/transfers" element={<TransferFeed />} />
                   <Route path="/schedule" element={<ScheduleView />} />
                   <Route path="/standings" element={<StandingsTable />} />
