@@ -1492,3 +1492,57 @@ a.usa-nav__link.usa-current {
 [data-theme="light"] footer {
   background-color: #1a1a2e !important;
 }
+
+[data-theme="light"] body,
+[data-theme="light"] .usa-section,
+[data-theme="light"] .grid-container {
+  background-color: #f5f5f5 !important;
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .usa-header {
+  background-color: #ffffff !important;
+}
+[data-theme="light"] .usa-nav__link,
+[data-theme="light"] .header-logo-link {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .welcome-banner {
+  background: linear-gradient(135deg, #e8f0fe, #dbeafe) !important;
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .welcome-banner__title,
+[data-theme="light"] .welcome-banner__text {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .usa-card__container,
+[data-theme="light"] .usa-card__body {
+  background-color: #ffffff !important;
+  color: #1a1a2e !important;
+  border: 1px solid #e5e7eb !important;
+}
+[data-theme="light"] .audio-summary {
+  background: linear-gradient(135deg, #e8f0fe, #dbeafe) !important;
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .filter-chip {
+  background-color: #e5e7eb !important;
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .filter-chip--active {
+  background-color: #EF0107 !important;
+  color: #ffffff !important;
+}
+[data-theme="light"] .usa-table {
+  background-color: #ffffff !important;
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .usa-table thead {
+  background-color: #f3f4f6 !important;
+  color: #1a1a2e !important;
+}
+[data-theme="light"] input[type="email"],
+[data-theme="light"] .usa-input {
+  background-color: #ffffff !important;
+  color: #1a1a2e !important;
+  border-color: #d1d5db !important;
+}
