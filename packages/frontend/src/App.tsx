@@ -11,7 +11,7 @@ import { StandingsTable } from "./components/StandingsTable";
 import { BookmarkList } from "./components/BookmarkList";
 import { NotificationBanner } from "./components/NotificationBanner";
 import { DigestPreview } from "./components/DigestPreview";
-import { NotFoundPage } from "./components/NotFoundPage";
+import { WomenFeed } from "./components/WomenFeed";
 import { fetchArsenalNews, fetchArsenalTransfers } from "./services/newsService";
 import { fetchArsenalFixtures, fetchArsenalResults, fetchPremierLeagueStandings, fetchTopScorers } from "./services/footballService";
 
@@ -52,7 +52,7 @@ export function App() {
                   <Route path="/standings" element={<StandingsTable />} />
                   <Route path="/saved" element={<BookmarkList />} />
                   <Route path="/digest" element={<DigestPreview />} />
-                  <Route path="/women" element={<ContentFeed contentType="women" />} />
+                  <Route path="/women" element={<WomenFeed />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </div>
