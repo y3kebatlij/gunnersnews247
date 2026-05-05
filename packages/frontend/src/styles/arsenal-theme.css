@@ -1546,3 +1546,16 @@ a.usa-nav__link.usa-current {
   color: #1a1a2e !important;
   border-color: #d1d5db !important;
 }
+
+/* Reduce bold weight throughout */
+h2, h3, h4 {
+  font-weight: 600 !important;
+}
+.usa-card__heading,
+.usa-card__body p,
+.results-count {
+  font-weight: 400 !important;
+}
+.usa-nav__link {
+  font-weight: 400 !important;
+}
