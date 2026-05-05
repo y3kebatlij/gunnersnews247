@@ -13,8 +13,8 @@ export function DigestPreview() {
         todayStart.setHours(0, 0, 0, 0);
         const todayArticles = data
           .filter(a => a.publicationDate && new Date(a.publicationDate) >= todayStart)
-          .slice(0, 15);
-        const recent = todayArticles.length >= 5 ? todayArticles : data.slice(0, 15);
+          .slice(0, 10);
+        const recent = todayArticles.length >= 5 ? todayArticles : data.slice(0, 10);
         setArticles(recent);
         setLoading(false);
       })
@@ -24,34 +24,35 @@ export function DigestPreview() {
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
   return (
-    <section aria-label="Daily digest preview">
-      <h2 className="usa-heading">Daily Digest Preview</h2>
-      <div className="digest-cta">
+    <section aria-label="Daily digest preview" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
+      <h2 style={{ fontSize: "1.4rem", fontWeight: "800", letterSpacing: "0.05em", textTransform: "uppercase", borderBottom: "3px solid #EF0107", paddingBottom: "0.5rem", marginBottom: "1.5rem" }}>Daily Digest Preview</h2>
+      <div className="digest-cta" style={{ marginBottom: "2rem" }}>
         <div className="digest-cta__text">
           <h3 className="digest-cta__title">Get this in your inbox every morning</h3>
           <p className="digest-cta__desc">Subscribe to receive the Arsenal Daily Digest at 9:00 AM EST. Free, no spam, unsubscribe anytime.</p>
         </div>
         <SubscribeForm />
       </div>
-      <div style={{ marginTop: "2rem" }}>
-        <h3 style={{ borderBottom: "2px solid #EF0107", paddingBottom: "0.5rem" }}>{"Arsenal Daily Digest - " + today}</h3>
-        <p style={{ color: "#9CA3AF", fontSize: "0.9rem" }}>Top 15 Arsenal stories today across news, blogs and podcasts:</p>
+      <div>
+        <h3 style={{ fontSize: "1.1rem", fontWeight: "700", borderBottom: "1px solid #EF0107", paddingBottom: "0.5rem", marginBottom: "1rem" }}>{"Arsenal Daily Digest - " + today}</h3>
+        <p style={{ color: "#9CA3AF", fontSize: "0.85rem", marginBottom: "1.25rem" }}>Top 10 Arsenal stories today across news, blogs and podcasts:</p>
         {loading && <p>Loading digest...</p>}
         {!loading && articles.length === 0 && <p style={{ color: "#9CA3AF" }}>No articles found for today yet. Check back soon!</p>}
         {!loading && articles.length > 0 && (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
             {articles.map((article, i) => (
-              <li key={article.contentId} style={{ display: "flex", gap: "1rem", padding: "0.85rem 0", borderBottom: "1px solid #1e3a5f", alignItems: "flex-start" }}>
-                <span style={{ color: "#EF0107", fontWeight: "bold", fontSize: "1rem", minWidth: "24px" }}>{i + 1}.</span>
+              <div key={article.contentId} style={{ display: "flex", gap: "1rem", padding: "1rem 0", borderBottom: "1px solid rgba(255,255,255,0.06)", alignItems: "flex-start" }}>
+                <span style={{ color: "#EF0107", fontWeight: "900", fontSize: "1.1rem", minWidth: "28px", paddingTop: "2px" }}>{i + 1}</span>
                 <div style={{ flex: 1 }}>
-                  <a href={article.sourceUrl} target="_blank" rel="noopener noreferrer" className="usa-link" style={{ fontWeight: "bold", fontSize: "0.95rem" }}>{article.title}</a>
-                  <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.82rem", color: "#9CA3AF" }}>
+                  <a href={article.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ fontWeight: "700", fontSize: "0.95rem", color: "#60a5fa", textDecoration: "none", lineHeight: "1.4", display: "block", marginBottom: "0.3rem" }}>{article.title}</a>
+                  {article.summary && <p style={{ margin: "0 0 0.3rem 0", fontSize: "0.83rem", color: "#9CA3AF", lineHeight: "1.5" }}>{article.summary}</p>}
+                  <span style={{ fontSize: "0.75rem", color: "#64748B" }}>
                     {article.sourceName} · {article.contentType} · {article.publicationDate ? new Date(article.publicationDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}
-                  </p>
+                  </span>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </section>

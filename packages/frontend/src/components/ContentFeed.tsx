@@ -17,9 +17,9 @@ function timeAgoShort(date: Date): string {
   return `${Math.floor(mins / 60)}h ago`;
 }
 
-export function ContentFeed() {
+export function ContentFeed({ contentType: initialType }: { contentType?: string } = {}) {
   const [items, setItems] = useState<ContentItem[]>([]);
-  const [contentType, setContentType] = useState("");
+  const [contentType, setContentType] = useState(initialType ?? "");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

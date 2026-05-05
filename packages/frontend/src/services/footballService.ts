@@ -145,7 +145,7 @@ export async function fetchPremierLeagueStandings(): Promise<Standing[]> {
     goalsAgainst: e.goalsAgainst,
     goalDifference: e.goalDifference,
     points: e.points,
-    recentForm: e.form ? e.form.split(",") : [],
+    recentForm: e.form ? e.form.split(",").filter((r: string) => r.trim() !== "") : [],
   }));
   setCache("standings", result);
   return result;

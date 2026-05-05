@@ -17,7 +17,6 @@ import { fetchArsenalFixtures, fetchArsenalResults, fetchPremierLeagueStandings,
 
 function Preloader() {
   useEffect(() => {
-    // Preload all data in background on app start
     const preload = async () => {
       try {
         await Promise.allSettled([
@@ -37,7 +36,7 @@ function Preloader() {
 
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/London49">
       <ThemeProvider>
         <WebSocketProvider>
           <div className="usa-layout-docs">
@@ -53,6 +52,7 @@ export function App() {
                   <Route path="/standings" element={<StandingsTable />} />
                   <Route path="/saved" element={<BookmarkList />} />
                   <Route path="/digest" element={<DigestPreview />} />
+                  <Route path="/women" element={<ContentFeed contentType="women" />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </div>

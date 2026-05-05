@@ -1,8 +1,18 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
-  test: {
-    globals: true,
-    include: ["packages/**/src/**/*.test.ts", "packages/**/src/**/*.test.tsx"],
+  base: "/London49/",
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+      "@arsenal/shared": path.resolve(__dirname, "../shared/src/index.ts"),
+    },
+  },
+  build: {
+    outDir: "dist",
+    sourcemap: true,
   },
 });
