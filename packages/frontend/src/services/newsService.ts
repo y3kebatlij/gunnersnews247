@@ -63,14 +63,10 @@ const RSS_SOURCES = [
   { url: "https://feeds.buzzsprout.com/1711422.rss", name: "Gooner Talk", country: "England", type: "podcast" },
   { url: "https://arseblog.com/category/arsenal-women-arsecast/feed/", name: "Arsenal Women Arsecast", country: "England", type: "podcast" },
   { url: "https://www.theguardian.com/football/arsenal-women/rss", name: "Guardian Women", country: "England", type: "women" },
-  { url: "https://www.bbc.co.uk/sport/women-s-football/rss.xml", name: "BBC Women's Football", country: "England", type: "women" },
+  { url: "https://www.skysports.com/rss/12040", name: "Sky Sports Women", country: "England", type: "women" },
   { url: "https://arseblog.com/category/arsenal-women/feed/", name: "Arseblog Women", country: "England", type: "women" },
   { url: "https://www.justarsenal.com/category/arsenal-women/feed", name: "Just Arsenal Women", country: "England", type: "women" },
-  { url: "https://www.theguardian.com/football/arsenal-women/rss", name: "Guardian Women", country: "England", type: "women" },
-{ url: "https://www.skysports.com/rss/12040", name: "Sky Sports Women", country: "England", type: "women" },
-{ url: "https://arseblog.com/category/arsenal-women/feed/", name: "Arseblog Women", country: "England", type: "women" },
-{ url: "https://www.justarsenal.com/category/arsenal-women/feed", name: "Just Arsenal Women", country: "England", type: "women" },
-{ url: "https://feeds.bbci.co.uk/sport/women-s-football/rss.xml", name: "BBC Women's Football", country: "England", type: "women" },
+  { url: "https://feeds.bbci.co.uk/sport/women-s-football/rss.xml", name: "BBC Women's Football", country: "England", type: "women" },
 ];
 
 const TRANSFER_SOURCES = [
@@ -87,11 +83,11 @@ const TRANSFER_KEYWORDS = ["transfer", "sign", "signing", "deal", "loan", "depar
 
 const ARSENAL_VIDEOS: ContentItem[] = [
   { contentId: "video-official-channel", title: "Arsenal FC - Official YouTube Channel", summary: "Watch the latest Arsenal FC match highlights, behind the scenes content, player interviews, training sessions and more on the official Arsenal YouTube channel.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/@Arsenal", sourceName: "Arsenal FC Official", sourceCountry: "England", contentType: "video", publicationDate: new Date().toISOString() },
-  { contentId: "video-fulham-highlights", title: "Arsenal 3-0 Fulham - Match Highlights", summary: "Viktor Gyokeres scores twice as Arsenal destroy Fulham 3-0 to go six points clear at the top of the Premier League. Watch the full match highlights.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/results?search_query=Arsenal+Fulham+3-0+highlights+2026", sourceName: "Arsenal FC Official", sourceCountry: "England", contentType: "video", publicationDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() },
+  { contentId: "video-ucl-highlights", title: "Arsenal vs PSG - Champions League Final Preview", summary: "Arsenal face PSG in the UEFA Champions League Final. Watch all the build-up, analysis and highlights from their semi-final victory.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/results?search_query=Arsenal+PSG+Champions+League+2026", sourceName: "Arsenal FC Official", sourceCountry: "England", contentType: "video", publicationDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() },
   { contentId: "video-atletico-highlights", title: "Arsenal vs Atletico Madrid - Champions League Semi Final", summary: "Watch the highlights from Arsenal's UEFA Champions League semi-final clash against Atletico Madrid at the Emirates Stadium.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/results?search_query=Arsenal+Atletico+Madrid+Champions+League+semi+final+2026", sourceName: "Arsenal FC Official", sourceCountry: "England", contentType: "video", publicationDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() },
   { contentId: "video-aftv", title: "AFTV - Arsenal Fan TV Reactions & Analysis", summary: "The largest Arsenal fan channel. Passionate fan reactions, match previews, post-match interviews and all things Arsenal.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/@AFTVMedia", sourceName: "AFTV", sourceCountry: "England", contentType: "video", publicationDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
-  { contentId: "video-training", title: "Arsenal Training - Pre-Match Preparation", summary: "Go behind the scenes as Arsenal prepare for their next match. Watch training drills and Mikel Arteta's tactical sessions.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/results?search_query=Arsenal+training+2026", sourceName: "Arsenal FC Official", sourceCountry: "England", contentType: "video", publicationDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() },
   { contentId: "video-gyokeres", title: "Viktor Gyokeres - All Goals & Assists for Arsenal", summary: "Watch every goal and assist from Viktor Gyokeres since joining Arsenal. The Swedish striker has been in sensational form.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/results?search_query=Viktor+Gyokeres+Arsenal+goals+2026", sourceName: "Arsenal FC Official", sourceCountry: "England", contentType: "video", publicationDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
+  { contentId: "video-latest", title: "Arsenal Latest Highlights & Goals 2026", summary: "Find all the latest Arsenal match highlights, goals, saves and more on YouTube. Updated after every Arsenal match.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/results?search_query=Arsenal+highlights+2026", sourceName: "YouTube", sourceCountry: "England", contentType: "video", publicationDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() },
 ];
 
 function parseRSSDate(dateStr: string | null): string | undefined {
@@ -146,7 +142,7 @@ export async function fetchArsenalNews(contentType?: string): Promise<ContentIte
     .flatMap(r => r.value)
     .filter(({ title, description, source }) => {
       if (source.type === "podcast") return true;
-if (source.type === "women") return (title + description).toLowerCase().includes("arsenal");
+      if (source.type === "women") return (title + description).toLowerCase().includes("arsenal");
       return (title + description).toLowerCase().includes("arsenal");
     })
     .map(({ i, title, link, description, pubDate, source }) => ({
@@ -161,13 +157,13 @@ if (source.type === "women") return (title + description).toLowerCase().includes
       publicationDate: parseRSSDate(pubDate),
     }))
     .sort((a, b) => {
-  const dA = a.publicationDate ? new Date(a.publicationDate).getTime() : 0;
-  const dB = b.publicationDate ? new Date(b.publicationDate).getTime() : 0;
-  return dB - dA;
-})
-.filter((item, index, self) => 
-  index === self.findIndex(t => t.title === item.title)
-);
+      const dA = a.publicationDate ? new Date(a.publicationDate).getTime() : 0;
+      const dB = b.publicationDate ? new Date(b.publicationDate).getTime() : 0;
+      return dB - dA;
+    })
+    .filter((item, index, self) =>
+      index === self.findIndex(t => t.title.trim() === item.title.trim())
+    );
 
   // Limit podcasts to max 5 per source
   const podcastCount: Record<string, number> = {};
@@ -178,11 +174,15 @@ if (source.type === "women") return (title + description).toLowerCase().includes
   });
 
   if (!contentType) {
-    const allItems = [...ARSENAL_VIDEOS, ...items].sort((a, b) => {
-      const dA = a.publicationDate ? new Date(a.publicationDate).getTime() : 0;
-      const dB = b.publicationDate ? new Date(b.publicationDate).getTime() : 0;
-      return dB - dA;
-    });
+    const allItems = [...ARSENAL_VIDEOS, ...items]
+      .sort((a, b) => {
+        const dA = a.publicationDate ? new Date(a.publicationDate).getTime() : 0;
+        const dB = b.publicationDate ? new Date(b.publicationDate).getTime() : 0;
+        return dB - dA;
+      })
+      .filter((item, index, self) =>
+        index === self.findIndex(t => t.title.trim() === item.title.trim())
+      );
     setCache(cacheKey, allItems);
     return allItems;
   }
@@ -215,6 +215,9 @@ export async function fetchArsenalTransfers(): Promise<TransferItem[]> {
       transferType: guessTransferType(title + description),
       publicationDate: parseRSSDate(pubDate) ?? new Date().toISOString(),
     }))
+    .filter((item, index, self) =>
+      index === self.findIndex(t => t.title.trim() === item.title.trim())
+    )
     .sort((a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime());
 
   setCache(cacheKey, items);

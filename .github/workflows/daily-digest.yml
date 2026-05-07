@@ -1,0 +1,16 @@
+name: Send Daily Digest
+
+on:
+  schedule:
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Daily Digest Email
+        run: |
+          curl -X POST https://arsenal-proxy.eyuelkt.workers.dev/send-digest \
+            -H "Content-Type: application/json" \
+            -d "{\"secret\": \"${{ secrets.DIGEST_SECRET }}\"}"

@@ -1566,3 +1566,16 @@ h2, h3, h4 {
 .usa-nav__link:hover {
   color: #EF0107 !important;
 }
+.usa-current,
+.usa-nav__link.usa-current {
+  color: #EF0107 !important;
+  border-bottom-color: #EF0107 !important;
+}
+.usa-nav__link.usa-current {
+  color: #EF0107 !important;
+  border-bottom: 3px solid #EF0107 !important;
+  font-weight: 700 !important;
+}
+.usa-nav__link:hover {
+  color: #EF0107 !important;
+}
