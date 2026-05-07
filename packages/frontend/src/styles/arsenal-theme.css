@@ -1579,3 +1579,76 @@ h2, h3, h4 {
 .usa-nav__link:hover {
   color: #EF0107 !important;
 }
+/* ===== MOBILE FIXES ===== */
+@media (max-width: 768px) {
+
+  /* 1. Fix standings title wrapping */
+  section[aria-label="League standings"] h2 {
+    font-size: 1.1rem !important;
+    white-space: nowrap !important;
+  }
+
+  /* 2. Fix standings table - show only key columns */
+  .usa-table th:nth-child(n+4):not(:last-child),
+  .usa-table td:nth-child(n+4):not(:last-child) {
+    display: none !important;
+  }
+
+  /* 3. Fix filter chips wrapping */
+  .filter-type-row,
+  div[role="group"] {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.4rem !important;
+  }
+
+  .filter-chip,
+  div[role="group"] button {
+    font-size: 0.75rem !important;
+    padding: 0.3rem 0.75rem !important;
+    white-space: nowrap !important;
+  }
+
+  /* 4. Fix menu - show nav links when open */
+  .usa-nav--open {
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: #0d1b2a !important;
+    z-index: 9999 !important;
+    padding: 2rem 1.5rem !important;
+    overflow-y: auto !important;
+  }
+
+  .usa-nav--open .usa-nav__primary {
+    flex-direction: column !important;
+    gap: 0 !important;
+    margin-top: 3rem !important;
+  }
+
+  .usa-nav--open .usa-nav__primary-item {
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+  }
+
+  .usa-nav--open .usa-nav__link {
+    display: block !important;
+    padding: 1rem 0 !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* General mobile padding */
+  .grid-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Card group single column */
+  .usa-card-group {
+    grid-template-columns: 1fr !important;
+  }
+}
