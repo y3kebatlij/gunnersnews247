@@ -1652,3 +1652,57 @@ h2, h3, h4 {
     grid-template-columns: 1fr !important;
   }
 }
+
+@media (max-width: 480px) {
+  /* Fix standings - show only #, Team, PTS on very small screens */
+  .usa-table th:nth-child(3),
+  .usa-table td:nth-child(3),
+  .usa-table th:nth-child(4),
+  .usa-table td:nth-child(4),
+  .usa-table th:nth-child(5),
+  .usa-table td:nth-child(5),
+  .usa-table th:nth-child(6),
+  .usa-table td:nth-child(6),
+  .usa-table th:nth-child(7),
+  .usa-table td:nth-child(7),
+  .usa-table th:nth-child(8),
+  .usa-table td:nth-child(8),
+  .usa-table th:nth-child(9),
+  .usa-table td:nth-child(9) {
+    display: none !important;
+  }
+
+  /* Fix saved star emoji */
+  section[aria-label="Saved articles"] div[style*="2rem"] {
+    font-size: 1.5rem !important;
+  }
+
+  /* Fix filter chips - single row scrollable */
+  .filter-type-row,
+  div[role="group"] {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 0.5rem !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .filter-type-row::-webkit-scrollbar,
+  div[role="group"]::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Fix menu overlay */
+  .usa-nav--open {
+    width: 75% !important;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5) !important;
+  }
+
+  /* Standings show PTS column */
+  .usa-table th:nth-child(10),
+  .usa-table td:nth-child(10) {
+    display: table-cell !important;
+    font-weight: 800 !important;
+    color: #EF0107 !important;
+  }
+}
