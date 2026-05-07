@@ -161,10 +161,13 @@ if (source.type === "women") return (title + description).toLowerCase().includes
       publicationDate: parseRSSDate(pubDate),
     }))
     .sort((a, b) => {
-      const dA = a.publicationDate ? new Date(a.publicationDate).getTime() : 0;
-      const dB = b.publicationDate ? new Date(b.publicationDate).getTime() : 0;
-      return dB - dA;
-    });
+  const dA = a.publicationDate ? new Date(a.publicationDate).getTime() : 0;
+  const dB = b.publicationDate ? new Date(b.publicationDate).getTime() : 0;
+  return dB - dA;
+})
+.filter((item, index, self) => 
+  index === self.findIndex(t => t.title === item.title)
+);
 
   // Limit podcasts to max 5 per source
   const podcastCount: Record<string, number> = {};
