@@ -81,7 +81,7 @@ body {
 .usa-nav__link,
 .usa-nav__primary-item button {
   color: var(--text-primary) !important;
-  font-weight: 600;
+  font-weight: 400;
   padding: 0.75rem 1rem;
   border: none;
   background: none;
@@ -91,13 +91,19 @@ body {
 
 .usa-nav__link:hover,
 .usa-nav__primary-item button:hover {
+  color: #EF0107 !important;
   background-color: rgba(255, 255, 255, 0.1) !important;
   border-radius: 4px;
 }
 
-.usa-current {
-  border-bottom: 3px solid var(--arsenal-red) !important;
-  color: #FFFFFF !important;
+/* ── NAV ACTIVE STATE: Arsenal red underline ── */
+.usa-current,
+.usa-nav__link.usa-current,
+a.usa-nav__link.usa-current {
+  color: #EF0107 !important;
+  border-bottom: 3px solid #EF0107 !important;
+  border-bottom-color: #EF0107 !important;
+  font-weight: 700 !important;
 }
 
 .usa-nav__secondary {
@@ -244,11 +250,13 @@ body {
   font-size: 1.05rem;
   line-height: 1.4;
   margin: 0;
+  font-weight: 400 !important;
 }
 
 .usa-card__body {
   padding: 0.75rem 1.25rem;
   color: var(--text-primary);
+  font-weight: 400 !important;
 }
 
 .usa-card__footer {
@@ -352,7 +360,6 @@ a:hover {
   background-color: var(--bg-secondary);
 }
 
-/* Override any USWDS default table striping */
 .usa-table--borderless td,
 .usa-table--borderless th {
   background-color: inherit;
@@ -470,27 +477,41 @@ div[role="alert"][aria-live="assertive"] .usa-alert__text {
   color: var(--text-primary);
 }
 
-/* Filter panel */
-fieldset.usa-fieldset {
-  border: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-}
-
+/* ── FILTER CHIPS: horizontal scroll on mobile, never wrap ── */
 .filter-panel {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.filter-type-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+fieldset.usa-fieldset {
+  border: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
 }
 
-.filter-chip {
+.filter-type-row,
+div[role="group"] {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;          /* never wrap — scroll instead */
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 0.5rem;
+  padding-bottom: 4px;        /* prevent clipping box-shadow */
+}
+
+.filter-type-row::-webkit-scrollbar,
+div[role="group"]::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chip,
+div[role="group"] button {
+  flex-shrink: 0;             /* chips never compress */
+  white-space: nowrap;
   background-color: var(--bg-input);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
@@ -502,15 +523,19 @@ fieldset.usa-fieldset {
   transition: all 0.15s;
 }
 
-.filter-chip:hover {
+.filter-chip:hover,
+div[role="group"] button:hover {
   background-color: var(--bg-card-hover);
-  border-color: var(--link-color);
+  border-color: #EF0107;
+  color: #EF0107;
 }
 
-.filter-chip--active {
-  background-color: var(--arsenal-red) !important;
+.filter-chip--active,
+div[role="group"] button[aria-pressed="true"],
+div[role="group"] button.active {
+  background-color: #EF0107 !important;
   color: #FFFFFF !important;
-  border-color: var(--arsenal-red) !important;
+  border-color: #EF0107 !important;
 }
 
 .filter-country {
@@ -991,6 +1016,102 @@ a:hover, .usa-link:hover {
     align-items: center;
     width: 100%;
   }
+
+  /* Fix standings title wrapping */
+  section[aria-label="League standings"] h2 {
+    font-size: 1.1rem !important;
+    white-space: nowrap !important;
+  }
+
+  /* Fix standings table — show only key columns */
+  .usa-table th:nth-child(n+4):not(:last-child),
+  .usa-table td:nth-child(n+4):not(:last-child) {
+    display: none !important;
+  }
+
+  /* General mobile padding */
+  .grid-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Card group single column */
+  .usa-card-group {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Fix standings — show only #, Team, PTS on very small screens */
+  .usa-table th:nth-child(3),
+  .usa-table td:nth-child(3),
+  .usa-table th:nth-child(4),
+  .usa-table td:nth-child(4),
+  .usa-table th:nth-child(5),
+  .usa-table td:nth-child(5),
+  .usa-table th:nth-child(6),
+  .usa-table td:nth-child(6),
+  .usa-table th:nth-child(7),
+  .usa-table td:nth-child(7),
+  .usa-table th:nth-child(8),
+  .usa-table td:nth-child(8),
+  .usa-table th:nth-child(9),
+  .usa-table td:nth-child(9) {
+    display: none !important;
+  }
+
+  /* Standings show PTS column */
+  .usa-table th:nth-child(10),
+  .usa-table td:nth-child(10) {
+    display: table-cell !important;
+    font-weight: 800 !important;
+    color: #EF0107 !important;
+  }
+
+  /* Fix saved star emoji */
+  section[aria-label="Saved articles"] div[style*="2rem"] {
+    font-size: 1.5rem !important;
+  }
+
+  /* Fix menu overlay */
+  .usa-nav--open {
+    width: 75% !important;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5) !important;
+  }
+}
+
+/* ========== Full-screen mobile nav overlay ========== */
+@media (max-width: 768px) {
+  .usa-nav--open {
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: #0d1b2a !important;
+    z-index: 9999 !important;
+    padding: 2rem 1.5rem !important;
+    overflow-y: auto !important;
+  }
+
+  .usa-nav--open .usa-nav__primary {
+    flex-direction: column !important;
+    gap: 0 !important;
+    margin-top: 3rem !important;
+  }
+
+  .usa-nav--open .usa-nav__primary-item {
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+  }
+
+  .usa-nav--open .usa-nav__link {
+    display: block !important;
+    padding: 1rem 0 !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+  }
 }
 
 /* ========== Router NavLink active state ========== */
@@ -1000,14 +1121,16 @@ a.usa-nav__link {
 }
 
 a.usa-nav__link:hover {
+  color: #EF0107 !important;
   background-color: rgba(255, 255, 255, 0.1) !important;
   border-radius: 4px;
   text-decoration: none;
 }
 
 a.usa-nav__link.usa-current {
-  border-bottom: 3px solid var(--arsenal-red) !important;
-  color: #FFFFFF !important;
+  color: #EF0107 !important;
+  border-bottom: 3px solid #EF0107 !important;
+  font-weight: 700 !important;
 }
 
 /* ========== Header Crest ========== */
@@ -1273,6 +1396,7 @@ a.usa-nav__link.usa-current {
   color: var(--text-secondary);
   font-size: 0.85rem;
   margin: 0 0 0.75rem;
+  font-weight: 400 !important;
 }
 
 /* ========== Load More ========== */
@@ -1386,7 +1510,8 @@ a.usa-nav__link.usa-current {
 .not-found__btn {
   display: inline-block;
 }
-/* ===== LIGHT MODE OVERRIDES ===== */
+
+/* ========== LIGHT MODE OVERRIDES ========== */
 [data-theme="light"] body,
 [data-theme="light"] {
   background-color: #f5f5f5 !important;
@@ -1401,6 +1526,11 @@ a.usa-nav__link.usa-current {
 [data-theme="light"] .usa-nav__link,
 [data-theme="light"] .header-logo-link {
   color: #1a1a2e !important;
+}
+
+[data-theme="light"] a.usa-nav__link.usa-current {
+  color: #EF0107 !important;
+  border-bottom-color: #EF0107 !important;
 }
 
 [data-theme="light"] .usa-section,
@@ -1418,16 +1548,12 @@ a.usa-nav__link.usa-current {
   color: #1a1a2e !important;
 }
 
-[data-theme="light"] .usa-card__container {
+[data-theme="light"] .usa-card__container,
+[data-theme="light"] .usa-card__body {
   background-color: #ffffff !important;
   color: #1a1a2e !important;
   border: 1px solid #e5e7eb !important;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
-}
-
-[data-theme="light"] .usa-card__body {
-  background-color: #ffffff !important;
-  color: #1a1a2e !important;
 }
 
 [data-theme="light"] .audio-summary {
@@ -1435,15 +1561,19 @@ a.usa-nav__link.usa-current {
   color: #1a1a2e !important;
 }
 
-[data-theme="light"] .filter-chip {
+[data-theme="light"] .filter-chip,
+[data-theme="light"] div[role="group"] button {
   background-color: #e5e7eb !important;
   color: #1a1a2e !important;
   border-color: #d1d5db !important;
 }
 
-[data-theme="light"] .filter-chip--active {
+[data-theme="light"] .filter-chip--active,
+[data-theme="light"] div[role="group"] button[aria-pressed="true"],
+[data-theme="light"] div[role="group"] button.active {
   background-color: #EF0107 !important;
   color: #ffffff !important;
+  border-color: #EF0107 !important;
 }
 
 [data-theme="light"] .subscribe-bar {
@@ -1493,216 +1623,174 @@ a.usa-nav__link.usa-current {
   background-color: #1a1a2e !important;
 }
 
-[data-theme="light"] body,
-[data-theme="light"] .usa-section,
-[data-theme="light"] .grid-container {
-  background-color: #f5f5f5 !important;
-  color: #1a1a2e !important;
-}
-[data-theme="light"] .usa-header {
-  background-color: #ffffff !important;
-}
-[data-theme="light"] .usa-nav__link,
-[data-theme="light"] .header-logo-link {
-  color: #1a1a2e !important;
-}
-[data-theme="light"] .welcome-banner {
-  background: linear-gradient(135deg, #e8f0fe, #dbeafe) !important;
-  color: #1a1a2e !important;
-}
-[data-theme="light"] .welcome-banner__title,
-[data-theme="light"] .welcome-banner__text {
-  color: #1a1a2e !important;
-}
-[data-theme="light"] .usa-card__container,
-[data-theme="light"] .usa-card__body {
-  background-color: #ffffff !important;
-  color: #1a1a2e !important;
-  border: 1px solid #e5e7eb !important;
-}
-[data-theme="light"] .audio-summary {
-  background: linear-gradient(135deg, #e8f0fe, #dbeafe) !important;
-  color: #1a1a2e !important;
-}
-[data-theme="light"] .filter-chip {
-  background-color: #e5e7eb !important;
-  color: #1a1a2e !important;
-}
-[data-theme="light"] .filter-chip--active {
-  background-color: #EF0107 !important;
-  color: #ffffff !important;
-}
-[data-theme="light"] .usa-table {
-  background-color: #ffffff !important;
-  color: #1a1a2e !important;
-}
-[data-theme="light"] .usa-table thead {
-  background-color: #f3f4f6 !important;
-  color: #1a1a2e !important;
-}
-[data-theme="light"] input[type="email"],
-[data-theme="light"] .usa-input {
-  background-color: #ffffff !important;
-  color: #1a1a2e !important;
-  border-color: #d1d5db !important;
-}
-
-/* Reduce bold weight throughout */
+/* ========== Typography weight cleanup ========== */
 h2, h3, h4 {
   font-weight: 600 !important;
 }
-.usa-card__heading,
-.usa-card__body p,
-.results-count {
-  font-weight: 400 !important;
+
+/* ========== Pulse animation (shared) ========== */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
 }
-.usa-nav__link {
-  font-weight: 400 !important;
+
+/* ========== LIVE COMMENTARY ========== */
+.live-commentary {
+  border: 1px solid #333;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 16px 0;
+  background: var(--bg-secondary);
 }
-.usa-current {
+
+.live-commentary--active {
+  border-color: #EF0107;
+  box-shadow: 0 0 0 1px rgba(239, 1, 7, 0.2);
+}
+
+.live-commentary--loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  color: #888;
+}
+
+.live-pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #EF0107;
+  flex-shrink: 0;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.live-commentary__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-wrap: wrap;
+}
+
+.live-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-badge {
+  background: #EF0107;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.live-minute {
+  font-size: 0.8rem;
+  color: #EF0107;
+  font-weight: 600;
+}
+
+.live-commentary__title {
+  font-size: 0.85rem;
+  font-weight: 600 !important;
+  margin: 0;
+  flex: 1;
+}
+
+.live-updated {
+  font-size: 0.72rem;
+  color: #666;
+  margin-left: auto;
+}
+
+.live-scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-primary);
+}
+
+.live-team {
+  font-size: 0.95rem;
+  font-weight: 600 !important;
+  text-align: center;
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.live-team--arsenal {
   color: #EF0107 !important;
-  border-bottom: 3px solid #EF0107 !important;
-}
-.usa-nav__link:hover {
-  color: #EF0107 !important;
-}
-.usa-current,
-.usa-nav__link.usa-current {
-  color: #EF0107 !important;
-  border-bottom-color: #EF0107 !important;
-}
-.usa-nav__link.usa-current {
-  color: #EF0107 !important;
-  border-bottom: 3px solid #EF0107 !important;
-  font-weight: 700 !important;
-}
-.usa-nav__link:hover {
-  color: #EF0107 !important;
-}
-/* ===== MOBILE FIXES ===== */
-@media (max-width: 768px) {
-
-  /* 1. Fix standings title wrapping */
-  section[aria-label="League standings"] h2 {
-    font-size: 1.1rem !important;
-    white-space: nowrap !important;
-  }
-
-  /* 2. Fix standings table - show only key columns */
-  .usa-table th:nth-child(n+4):not(:last-child),
-  .usa-table td:nth-child(n+4):not(:last-child) {
-    display: none !important;
-  }
-
-  /* 3. Fix filter chips wrapping */
-  .filter-type-row,
-  div[role="group"] {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 0.4rem !important;
-  }
-
-  .filter-chip,
-  div[role="group"] button {
-    font-size: 0.75rem !important;
-    padding: 0.3rem 0.75rem !important;
-    white-space: nowrap !important;
-  }
-
-  /* 4. Fix menu - show nav links when open */
-  .usa-nav--open {
-    display: flex !important;
-    flex-direction: column !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: #0d1b2a !important;
-    z-index: 9999 !important;
-    padding: 2rem 1.5rem !important;
-    overflow-y: auto !important;
-  }
-
-  .usa-nav--open .usa-nav__primary {
-    flex-direction: column !important;
-    gap: 0 !important;
-    margin-top: 3rem !important;
-  }
-
-  .usa-nav--open .usa-nav__primary-item {
-    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
-  }
-
-  .usa-nav--open .usa-nav__link {
-    display: block !important;
-    padding: 1rem 0 !important;
-    font-size: 1.2rem !important;
-    font-weight: 600 !important;
-  }
-
-  /* General mobile padding */
-  .grid-container {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
-
-  /* Card group single column */
-  .usa-card-group {
-    grid-template-columns: 1fr !important;
-  }
 }
 
-@media (max-width: 480px) {
-  /* Fix standings - show only #, Team, PTS on very small screens */
-  .usa-table th:nth-child(3),
-  .usa-table td:nth-child(3),
-  .usa-table th:nth-child(4),
-  .usa-table td:nth-child(4),
-  .usa-table th:nth-child(5),
-  .usa-table td:nth-child(5),
-  .usa-table th:nth-child(6),
-  .usa-table td:nth-child(6),
-  .usa-table th:nth-child(7),
-  .usa-table td:nth-child(7),
-  .usa-table th:nth-child(8),
-  .usa-table td:nth-child(8),
-  .usa-table th:nth-child(9),
-  .usa-table td:nth-child(9) {
-    display: none !important;
-  }
+.live-score {
+  font-size: 1.8rem;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
 
-  /* Fix saved star emoji */
-  section[aria-label="Saved articles"] div[style*="2rem"] {
-    font-size: 1.5rem !important;
-  }
+.live-feed {
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 8px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}
 
-  /* Fix filter chips - single row scrollable */
-  .filter-type-row,
-  div[role="group"] {
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    padding-bottom: 0.5rem !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
+.live-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
 
-  .filter-type-row::-webkit-scrollbar,
-  div[role="group"]::-webkit-scrollbar {
-    display: none !important;
-  }
+.live-event:hover {
+  background: rgba(255,255,255,0.03);
+}
 
-  /* Fix menu overlay */
-  .usa-nav--open {
-    width: 75% !important;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.5) !important;
-  }
+.live-event--goal {
+  background: rgba(239, 1, 7, 0.06);
+}
 
-  /* Standings show PTS column */
-  .usa-table th:nth-child(10),
-  .usa-table td:nth-child(10) {
-    display: table-cell !important;
-    font-weight: 800 !important;
-    color: #EF0107 !important;
-  }
+.live-event--goal:hover {
+  background: rgba(239, 1, 7, 0.12);
+}
+
+.live-event__icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.live-event__text {
+  flex: 1;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.live-event__minute {
+  font-size: 0.75rem;
+  color: #888;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.live-error {
+  text-align: center;
+  color: #EF0107;
+  font-size: 0.8rem;
+  padding: 8px;
 }

@@ -53,10 +53,10 @@ const RSS_SOURCES = [
   { url: "https://www.supersport.com/rss/football", name: "SuperSport", country: "Africa", type: "news" },
   { url: "https://sportstar.thehindu.com/football/feed", name: "Sportstar India", country: "Asia", type: "news" },
   { url: "https://en.africatopsports.com/feed", name: "Africa Top Sports", country: "Africa", type: "news" },
-{ url: "https://www.futaa.com/rss/football", name: "Futaa", country: "Africa", type: "news" },
-{ url: "https://www.marca.com/en/football/arsenal/rss.html", name: "Marca", country: "Spain", type: "news" },
-{ url: "https://www.goal.com/pt-br/feeds/news", name: "Goal Brasil", country: "Brazil", type: "news" },
-{ url: "https://www.tycsports.com/rss", name: "TyC Sports", country: "Argentina", type: "news" },
+  { url: "https://www.futaa.com/rss/football", name: "Futaa", country: "Africa", type: "news" },
+  { url: "https://www.marca.com/en/football/arsenal/rss.html", name: "Marca", country: "Spain", type: "news" },
+  { url: "https://www.goal.com/pt-br/feeds/news", name: "Goal Brasil", country: "Brazil", type: "news" },
+  { url: "https://www.tycsports.com/rss", name: "TyC Sports", country: "Argentina", type: "news" },
   { url: "https://arseblog.com/feed/", name: "Arseblog", country: "England", type: "blog" },
   { url: "https://www.justarsenal.com/feed", name: "Just Arsenal", country: "England", type: "blog" },
   { url: "https://paininthearsenal.com/feed", name: "Pain in the Arsenal", country: "England", type: "blog" },
@@ -84,7 +84,11 @@ const TRANSFER_SOURCES = [
   { url: "https://www.goal.com/feeds/en/news", name: "Goal.com", country: "Global" },
 ];
 
-const TRANSFER_KEYWORDS = ["transfer", "sign", "signing", "deal", "loan", "depart", "exit", "bid", "fee", "contract", "extension", "rumour", "rumor", "target", "move", "linked", "interest", "window", "summer", "january"];
+const TRANSFER_KEYWORDS = [
+  "transfer", "sign", "signing", "deal", "loan", "depart", "exit", "bid",
+  "fee", "contract", "extension", "rumour", "rumor", "target", "move",
+  "linked", "interest", "window", "summer", "january",
+];
 
 const ARSENAL_VIDEOS: ContentItem[] = [
   { contentId: "video-official-channel", title: "Arsenal FC - Official YouTube Channel", summary: "Watch the latest Arsenal FC match highlights, behind the scenes content, player interviews, training sessions and more on the official Arsenal YouTube channel.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/@Arsenal", sourceName: "Arsenal FC Official", sourceCountry: "England", contentType: "video", publicationDate: new Date().toISOString() },
@@ -94,6 +98,32 @@ const ARSENAL_VIDEOS: ContentItem[] = [
   { contentId: "video-gyokeres", title: "Viktor Gyokeres - All Goals & Assists for Arsenal", summary: "Watch every goal and assist from Viktor Gyokeres since joining Arsenal. The Swedish striker has been in sensational form.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/results?search_query=Viktor+Gyokeres+Arsenal+goals+2026", sourceName: "Arsenal FC Official", sourceCountry: "England", contentType: "video", publicationDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
   { contentId: "video-latest", title: "Arsenal Latest Highlights & Goals 2026", summary: "Find all the latest Arsenal match highlights, goals, saves and more on YouTube. Updated after every Arsenal match.", durationLabel: "Video", sourceUrl: "https://www.youtube.com/results?search_query=Arsenal+highlights+2026", sourceName: "YouTube", sourceCountry: "England", contentType: "video", publicationDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() },
 ];
+
+// ── DEDUPLICATION ────────────────────────────────────────────
+// Builds an 8-word fingerprint from the normalised title.
+// Two articles are considered duplicates if their fingerprints match,
+// regardless of source — catches cross-syndicated stories.
+function titleFingerprint(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")   // strip punctuation
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .slice(0, 8)                    // first 8 words
+    .join(" ");
+}
+
+function deduplicateByTitle<T extends { title: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const fp = titleFingerprint(item.title);
+    if (!fp || seen.has(fp)) return false;
+    seen.add(fp);
+    return true;
+  });
+}
+// ────────────────────────────────────────────────────────────
 
 function parseRSSDate(dateStr: string | null): string | undefined {
   if (!dateStr) return undefined;
@@ -142,7 +172,7 @@ export async function fetchArsenalNews(contentType?: string): Promise<ContentIte
   const sources = contentType ? RSS_SOURCES.filter(s => s.type === contentType) : RSS_SOURCES;
   const results = await Promise.allSettled(sources.map(fetchRSSItems));
 
-  let items = results
+  let items: ContentItem[] = results
     .filter((r): r is PromiseFulfilledResult<any[]> => r.status === "fulfilled")
     .flatMap(r => r.value)
     .filter(({ title, description, source }) => {
@@ -165,10 +195,10 @@ export async function fetchArsenalNews(contentType?: string): Promise<ContentIte
       const dA = a.publicationDate ? new Date(a.publicationDate).getTime() : 0;
       const dB = b.publicationDate ? new Date(b.publicationDate).getTime() : 0;
       return dB - dA;
-    })
-    .filter((item, index, self) =>
-      index === self.findIndex(t => t.title.trim() === item.title.trim())
-    );
+    });
+
+  // Deduplicate using 8-word title fingerprint (catches cross-syndicated stories)
+  items = deduplicateByTitle(items);
 
   // Limit podcasts to max 5 per source
   const podcastCount: Record<string, number> = {};
@@ -179,15 +209,13 @@ export async function fetchArsenalNews(contentType?: string): Promise<ContentIte
   });
 
   if (!contentType) {
-    const allItems = [...ARSENAL_VIDEOS, ...items]
-      .sort((a, b) => {
+    const allItems = deduplicateByTitle(
+      [...ARSENAL_VIDEOS, ...items].sort((a, b) => {
         const dA = a.publicationDate ? new Date(a.publicationDate).getTime() : 0;
         const dB = b.publicationDate ? new Date(b.publicationDate).getTime() : 0;
         return dB - dA;
       })
-      .filter((item, index, self) =>
-        index === self.findIndex(t => t.title.trim() === item.title.trim())
-      );
+    );
     setCache(cacheKey, allItems);
     return allItems;
   }
@@ -202,7 +230,7 @@ export async function fetchArsenalTransfers(): Promise<TransferItem[]> {
   if (cached) return cached;
 
   const results = await Promise.allSettled(TRANSFER_SOURCES.map(fetchRSSItems));
-  const items = results
+  const items: TransferItem[] = results
     .filter((r): r is PromiseFulfilledResult<any[]> => r.status === "fulfilled")
     .flatMap(r => r.value)
     .filter(({ title, description }) => {
@@ -220,11 +248,10 @@ export async function fetchArsenalTransfers(): Promise<TransferItem[]> {
       transferType: guessTransferType(title + description),
       publicationDate: parseRSSDate(pubDate) ?? new Date().toISOString(),
     }))
-    .filter((item, index, self) =>
-      index === self.findIndex(t => t.title.trim() === item.title.trim())
-    )
     .sort((a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime());
 
-  setCache(cacheKey, items);
-  return items;
+  // Deduplicate transfers with same fingerprint approach
+  const deduped = deduplicateByTitle(items);
+  setCache(cacheKey, deduped);
+  return deduped;
 }
