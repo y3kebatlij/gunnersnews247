@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { path: "/women", label: "Women" },
   { path: "/digest", label: "Digest" },
   { path: "/saved", label: "Saved" },
+  { path: "/video", label: "Video" },
 ];
 
 export function Header() {
