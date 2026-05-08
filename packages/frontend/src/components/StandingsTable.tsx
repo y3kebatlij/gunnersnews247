@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchPremierLeagueStandings, fetchTopScorers, Standing, Scorer } from "../services/footballService";
 
-function FormBadge({ result }: { result: string }) {
-  const colors: Record<string, string> = { W: "#2E8540", D: "#9C824A", L: "#EF0107" };
-  return (
-    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: "22px", height: "22px", borderRadius: "4px", background: colors[result] ?? "#333", color: "white", fontSize: "0.7rem", fontWeight: "800", margin: "0 1px" }}>
-      {result}
-    </span>
-  );
-}
-
 export function StandingsTable() {
   const [standings, setStandings] = useState<Standing[]>([]);
   const [scorers, setScorers] = useState<Scorer[]>([]);
@@ -60,11 +51,6 @@ export function StandingsTable() {
                     <td style={{ padding: "0.6rem 0.75rem", textAlign: "center" }}>{entry.goalsAgainst}</td>
                     <td style={{ padding: "0.6rem 0.75rem", textAlign: "center", color: entry.goalDifference > 0 ? "#2E8540" : entry.goalDifference < 0 ? "#EF0107" : "inherit" }}>{entry.goalDifference > 0 ? `+${entry.goalDifference}` : entry.goalDifference}</td>
                     <td style={{ padding: "0.6rem 0.75rem", textAlign: "center", fontWeight: "800", color: isArsenal ? "#EF0107" : "inherit" }}>{entry.points}</td>
-                    <td style={{ padding: "0.6rem 0.75rem", textAlign: "center" }}>
-                      <div style={{ display: "flex", justifyContent: "center", gap: "1px" }}>
-                        {(entry.recentForm ?? []).slice(0, 5).map((r, i) => <FormBadge key={i} result={r} />)}
-                      </div>
-                    </td>
                   </tr>
                 );
               })}

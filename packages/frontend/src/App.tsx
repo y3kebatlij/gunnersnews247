@@ -12,6 +12,7 @@ import { BookmarkList } from "./components/BookmarkList";
 import { NotificationBanner } from "./components/NotificationBanner";
 import { DigestPreview } from "./components/DigestPreview";
 import { NotFoundPage } from "./components/NotFoundPage";
+import { VideoFeed } from "./components/VideoFeed";
 import { WomenFeed } from "./components/WomenFeed";
 import { fetchArsenalNews, fetchArsenalTransfers } from "./services/newsService";
 import { fetchArsenalFixtures, fetchArsenalResults, fetchPremierLeagueStandings, fetchTopScorers } from "./services/footballService";
@@ -53,6 +54,7 @@ export function App() {
                   <Route path="/schedule" element={<ScheduleView />} />
                   <Route path="/standings" element={<StandingsTable />} />
                   <Route path="/saved" element={<BookmarkList />} />
+                  <Route path="/video" element={<VideoFeed />} />
                   <Route path="/digest" element={<DigestPreview />} />
                   <Route path="/women" element={<WomenFeed />} />
                   <Route path="*" element={<NotFoundPage />} />
