@@ -9,10 +9,10 @@ interface PlayerInjury {
 }
 
 const INJURIES: PlayerInjury[] = [
-  { player: "Mikel Merino", position: "Midfielder", injury: "Broken foot (surgery)", status: "Out", expectedReturn: "May 24 vs Crystal Palace" },
-  { player: "Kai Havertz", position: "Midfielder", injury: "Groin (muscular niggle)", status: "Doubtful", expectedReturn: "May 5 vs Atletico Madrid" },
-  { player: "Jurrien Timber", position: "Defender", injury: "Muscle injury", status: "Out", expectedReturn: "May 5 vs Atletico Madrid" },
-  { player: "Martin Odegaard", position: "Midfielder", injury: "Knock (substituted early)", status: "Doubtful", expectedReturn: "TBC" },
+  { player: "Jurrien Timber", position: "Defender", injury: "Muscle injury", status: "Doubtful", expectedReturn: "vs PSG Champions League Final" },
+  { player: "Mikel Merino", position: "Midfielder", injury: "Broken foot (surgery)", status: "Doubtful", expectedReturn: "vs PSG Champions League Final" },
+  { player: "Martin Odegaard", position: "Midfielder", injury: "Knock", status: "Return", expectedReturn: "Expected back vs West Ham" },
+  { player: "Kai Havertz", position: "Midfielder", injury: "Groin (muscular niggle)", status: "Return", expectedReturn: "Expected back vs West Ham" },
 ];
 
 const STATUS_STYLES = {
@@ -40,7 +40,7 @@ export function InjuryReport() {
           );
         })}
       </div>
-      <p style={{ fontSize: "0.75rem", color: "#6B7280", marginTop: "0.75rem" }}>Last updated: May 3, 2026 · Source: Arsenal FC, Daily Cannon</p>
+      <p style={{ fontSize: "0.75rem", color: "#6B7280", marginTop: "0.75rem" }}>Last updated: May 10, 2026 · Source: Arsenal FC, Daily Cannon</p>
     </section>
   );
 }

@@ -200,12 +200,13 @@ export async function fetchArsenalNews(contentType?: string): Promise<ContentIte
   // Deduplicate using 8-word title fingerprint (catches cross-syndicated stories)
   items = deduplicateByTitle(items);
 
-  // Limit podcasts to max 5 per source
-  const podcastCount: Record<string, number> = {};
+  // Limit podcasts and blogs to max 5 per source
+  const sourceCount: Record<string, number> = {};
   items = items.filter(item => {
-    if (item.contentType !== "podcast") return true;
-    podcastCount[item.sourceName] = (podcastCount[item.sourceName] || 0) + 1;
-    return podcastCount[item.sourceName] <= 5;
+    if (item.contentType !== "podcast" && item.contentType !== "blog") return true;
+    const key = `${item.contentType}-${item.sourceName}`;
+    sourceCount[key] = (sourceCount[key] || 0) + 1;
+    return sourceCount[key] <= 5;
   });
 
   if (!contentType) {

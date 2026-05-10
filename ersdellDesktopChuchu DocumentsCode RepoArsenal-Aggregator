@@ -8,3 +8,138 @@
 [33m65bddc6[m Fix duplicates, nav color, add daily digest workflow
 [33ma35b836[m Revert index.html to fix blank page
 [33m0948ec9[m Fix URL hash redirect
+import React, { useEffect, useState } from "react";
+import { fetchArsenalFixtures, fetchArsenalResults, Match } from "../services/footballService";
+import { InjuryReport } from "./InjuryReport";
+
+const RESULT_COLORS = {
+  W: { bg: "#2E8540", label: "W" },
+  D: { bg: "#9C824A", label: "D" },
+  L: { bg: "#EF0107", label: "L" },
+};
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+
+function formatTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function isWithin24Hours(dateStr: string): boolean {
+  const diff = new Date(dateStr).getTime() - Date.now();
+  return diff > 0 && diff <= 24 * 60 * 60 * 1000;
+}
+
+function shortName(name: string): string {
+  return name.replace(" FC", "").replace(" United", " Utd").replace("Club Atletico de Madrid", "Atletico Madrid").replace("Club Atlético de Madrid", "Atletico Madrid");
+}
+
+function getMatchFact(opponent: string, competition: string): string {
+  const facts: Record<string, string> = {
+    "Atletico": "Arsenal have never lost to Atletico Madrid at the Emirates Stadium.",
+    "West Ham": "Arsenal have won their last 4 Premier League meetings against West Ham.",
+    "Burnley": "Arsenal have scored in each of their last 8 games against Burnley.",
+    "Crystal Palace": "Arsenal won the reverse fixture 5-0 at Selhurst Park this season.",
+    "Manchester City": "Title-deciding fixture — Arsenal lead City by 5 points.",
+    "Chelsea": "London derby — Arsenal have won 3 of the last 4 against Chelsea.",
+    "Liverpool": "Two title contenders clash — one of the biggest games of the season.",
+    "Tottenham": "North London Derby — Arsenal have won the last 3 meetings.",
+    "Bournemouth": "Arsenal have scored 3+ goals in their last 3 meetings with Bournemouth.",
+    "Brentford": "Arsenal are unbeaten in their last 5 games against Brentford.",
+    "Newcastle": "Arsenal beat Newcastle 1-0 in the reverse fixture at St James Park.",
+    "Aston Villa": "Arsenal vs Villa — a clash between two of the Premier League's best attacks.",
+    "Fulham": "Arsenal demolished Fulham 3-0 earlier this season.",
+    "Everton": "Arsenal have kept a clean sheet in 4 of their last 5 games against Everton.",
+  };
+  for (const [key, fact] of Object.entries(facts)) {
+    if (opponent.includes(key)) return fact;
+  }
+  if (competition.includes("Champions League")) return "Arsenal are chasing their first ever Champions League title!";
+  return "Arsenal are 6 points clear at the top — form of their lives!";
+}
+
+export function ScheduleView() {
+  const [fixtures, setFixtures] = useState<Match[]>([]);
+  const [results, setResults] = useState<Match[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.allSettled([fetchArsenalFixtures(), fetchArsenalResults()])
+      .then(([fix, res]) => {
+        if (fix.status === "fulfilled") setFixtures(fix.value);
+        if (res.status === "fulfilled") setResults(res.value);
+        setLoading(false);
+      });
+  }, []);
+
+  return (
+    <section aria-label="Schedule and results" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
+      <h2 style={{ fontSize: "1.4rem", fontWeight: "800", letterSpacing: "0.05em", textTransform: "uppercase", borderBottom: "3px solid #EF0107", paddingBottom: "0.5rem", marginBottom: "1.5rem" }}>
+        Schedule & Results
+      </h2>
+
+      {results.length > 0 && (
+        <div style={{ marginBottom: "2.5rem" }}>
+          <h3 style={{ fontSize: "1rem", fontWeight: "700", letterSpacing: "0.08em", textTransform: "uppercase", color: "#9CA3AF", marginBottom: "1rem" }}>Recent Results</h3>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "0.85rem" }}>
+            {results.map((r) => {
+              const resultKey = r.result as "W" | "D" | "L" | undefined;
+              const rs = resultKey ? RESULT_COLORS[resultKey] : RESULT_COLORS.D;
+              const isHome = r.homeTeam.includes("Arsenal");
+              const opponent = shortName(isHome ? r.awayTeam : r.homeTeam);
+              return (
+                <div key={r.matchId} style={{ background: "rgba(255,255,255,0.04)", borderRadius: "12px", padding: "1rem", textAlign: "center", borderTop: `3px solid ${rs.bg}`, backdropFilter: "blur(4px)" }}>
+                  <span style={{ background: rs.bg, color: "white", padding: "3px 14px", borderRadius: "12px", fontSize: "0.78rem", fontWeight: "800", display: "inline-block", marginBottom: "0.6rem", letterSpacing: "0.05em" }}>{rs.label}</span>
+                  <p style={{ margin: "0 0 0.2rem 0", fontSize: "0.8rem", color: "#9CA3AF" }}>{isHome ? "Arsenal" : opponent}</p>
+                  <p style={{ margin: "0 0 0.2rem 0", fontSize: "1.5rem", fontWeight: "900", color: "white", letterSpacing: "0.1em" }}>{r.homeScore} - {r.awayScore}</p>
+                  <p style={{ margin: "0 0 0.3rem 0", fontSize: "0.8rem", color: "#9CA3AF" }}>{isHome ? opponent : "Arsenal"}</p>
+                  <p style={{ margin: "0.4rem 0 0 0", fontSize: "0.7rem", color: "#64748B" }}>
+                    {r.competition.replace("UEFA ", "").replace("Premier League", "PL")} · {new Date(r.kickoffTime).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <div style={{ marginBottom: "2.5rem" }}>
+        <h3 style={{ fontSize: "1rem", fontWeight: "700", letterSpacing: "0.08em", textTransform: "uppercase", color: "#9CA3AF", marginBottom: "1rem" }}>Upcoming Matches</h3>
+        {loading && <p>Loading fixtures...</p>}
+        {!loading && fixtures.length === 0 && <p style={{ color: "#9CA3AF" }}>No upcoming matches scheduled.</p>}
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+          {fixtures.map((match, idx) => {
+            const isHome = match.homeTeam.includes("Arsenal");
+            const opponent = shortName(isHome ? match.awayTeam : match.homeTeam);
+            const highlight = isWithin24Hours(match.kickoffTime);
+            const isNext = idx === 0;
+            const fact = isNext ? getMatchFact(opponent, match.competition) : null;
+            return (
+              <div key={match.matchId} style={{ borderRadius: "12px", padding: "1.1rem 1.5rem", borderLeft: highlight ? "4px solid #F59E0B" : isNext ? "4px solid #60a5fa" : "4px solid #EF0107", background: isNext ? "linear-gradient(135deg, rgba(30,58,95,0.8), rgba(45,95,166,0.4))" : "rgba(255,255,255,0.03)", boxShadow: isNext ? "0 4px 20px rgba(96,165,250,0.1)" : "none", transition: "all 0.2s" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", flexWrap: "wrap" }}>
+                  <div style={{ flex: 1 }}>
+                    {isNext && <span style={{ fontSize: "0.68rem", color: "#60a5fa", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.12em", display: "block", marginBottom: "0.35rem" }}>Next Match</span>}
+                    {highlight && <span style={{ fontSize: "0.68rem", color: "#F59E0B", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.12em", display: "block", marginBottom: "0.35rem" }}>Today!</span>}
+                    <p style={{ margin: 0, fontWeight: "800", fontSize: "1.05rem", letterSpacing: "0.01em" }}>
+                      Arsenal {isHome ? "vs" : "@"} {opponent}
+                      <span style={{ marginLeft: "0.5rem", fontSize: "0.72rem", color: "#9CA3AF", fontWeight: "400" }}>({isHome ? "Home" : "Away"})</span>
+                    </p>
+                    <p style={{ margin: "0.3rem 0 0 0", fontSize: "0.8rem", color: "#9CA3AF" }}>{match.competition.replace("UEFA ", "")}</p>
+                    {fact && <p style={{ margin: "0.4rem 0 0 0", fontSize: "0.78rem", color: "#60a5fa", fontStyle: "italic", lineHeight: "1.4" }}>💡 {fact}</p>}
+                  </div>
+                  <div style={{ textAlign: "right", flexShrink: 0 }}>
+                    <p style={{ margin: 0, fontWeight: "700", fontSize: "0.95rem", color: highlight ? "#F59E0B" : isNext ? "#60a5fa" : "inherit" }}>{formatDate(match.kickoffTime)}</p>
+                    <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.85rem", color: "#9CA3AF" }}>{formatTime(match.kickoffTime)}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <InjuryReport />
+    </section>
+  );
+}
