@@ -14,7 +14,10 @@ interface SavedArticle {
 export function getBookmarks(): SavedArticle[] {
   try {
     const stored = localStorage.getItem("arsenal-bookmarks");
-    return stored ? JSON.parse(stored) : [];
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    // Filter out any null/corrupt entries
+    return Array.isArray(parsed) ? parsed.filter(b => b && b.contentId) : [];
   } catch { return []; }
 }
 
@@ -51,7 +54,7 @@ export function BookmarkList() {
       <h2 className="usa-heading">Saved Articles</h2>
       {items.length === 0 && (
         <div style={{ textAlign: "center", padding: "3rem", color: "#9CA3AF" }}>
-          <p style={{ fontSize: "2rem" }}>?</p>
+          <p style={{ fontSize: "2rem" }}>⭐</p>
           <p>No saved articles yet.</p>
           <p style={{ fontSize: "0.9rem" }}>Click the bookmark icon on any article to save it here for later reading.</p>
         </div>
@@ -80,7 +83,7 @@ export function BookmarkList() {
                   </h3>
                   <p style={{ margin: "0.25rem 0", fontSize: "0.9rem" }}>{item.summary}</p>
                   <p style={{ fontSize: "0.8rem", color: "#9CA3AF", margin: 0 }}>
-                    {item.sourceName} � Saved {new Date(item.savedAt).toLocaleDateString()}
+                    {item.sourceName} · Saved {new Date(item.savedAt).toLocaleDateString()}
                   </p>
                 </div>
                 <button
@@ -96,7 +99,7 @@ export function BookmarkList() {
                   aria-label="Remove bookmark"
                   type="button"
                 >
-                  ?
+                  ✕
                 </button>
               </div>
             </div>
