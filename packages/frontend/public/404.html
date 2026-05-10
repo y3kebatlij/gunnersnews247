@@ -5,9 +5,10 @@
   <title>Arsenal News</title>
   <script>
     var l = window.location;
-    var path = l.pathname;
-    if (path.indexOf('/?p=') === -1) {
-      sessionStorage.setItem('redirect', path + l.search + l.hash);
+    var path = l.pathname + l.search + l.hash;
+    // Only redirect if not already at root to prevent loops
+    if (path !== '/' && path !== '') {
+      sessionStorage.setItem('redirect', path);
       l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + '/');
     }
   </script>
