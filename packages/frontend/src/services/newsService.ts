@@ -63,9 +63,11 @@ const RSS_SOURCES = [
   { url: "https://le-grove.co.uk/feed", name: "Le Grove", country: "England", type: "blog" },
   { url: "https://goonerdaily.com/feed", name: "Gooner Daily", country: "England", type: "blog" },
   { url: "https://arseblog.com/category/arsecast/feed/", name: "Arsecast", country: "England", type: "podcast" },
-  { url: "https://feeds.acast.com/public/shows/handbrake-off-the-athletic-fc-s-arsenal-show", name: "Handbrake Off", country: "England", type: "podcast" },
-  { url: "https://feeds.simplecast.com/UA_OfDYj", name: "ArsenalVision", country: "USA", type: "podcast" },
-  { url: "https://feeds.buzzsprout.com/1711422.rss", name: "Gooner Talk", country: "England", type: "podcast" },
+  { url: "https://feeds.acast.com/public/shows/681887451d28d623139a0fc9", name: "Handbrake Off", country: "England", type: "podcast" },
+  { url: "https://feeds.simplecast.com/sjbSL_pM", name: "ArsenalVision", country: "USA", type: "podcast" },
+  { url: "https://feeds.acast.com/public/shows/6240943ecb6c90001298fb89", name: "Gooner Talk", country: "England", type: "podcast" },
+  { url: "https://feeds.acast.com/public/shows/inside-arsenal-with-charles-watts", name: "Inside Arsenal", country: "England", type: "podcast" },
+  { url: "https://feeds.acast.com/public/shows/the-grove-an-arsenal-podcast", name: "The Grove", country: "England", type: "podcast" },
   { url: "https://arseblog.com/category/arsenal-women-arsecast/feed/", name: "Arsenal Women Arsecast", country: "England", type: "podcast" },
   { url: "https://www.theguardian.com/football/arsenal-women/rss", name: "Guardian Women", country: "England", type: "women" },
   { url: "https://www.skysports.com/rss/12040", name: "Sky Sports Women", country: "England", type: "women" },
@@ -100,17 +102,14 @@ const ARSENAL_VIDEOS: ContentItem[] = [
 ];
 
 // ── DEDUPLICATION ────────────────────────────────────────────
-// Builds an 8-word fingerprint from the normalised title.
-// Two articles are considered duplicates if their fingerprints match,
-// regardless of source — catches cross-syndicated stories.
 function titleFingerprint(title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, "")   // strip punctuation
+    .replace(/[^a-z0-9\s]/g, "")
     .replace(/\s+/g, " ")
     .trim()
     .split(" ")
-    .slice(0, 8)                    // first 8 words
+    .slice(0, 8)
     .join(" ");
 }
 
@@ -197,7 +196,7 @@ export async function fetchArsenalNews(contentType?: string): Promise<ContentIte
       return dB - dA;
     });
 
-  // Deduplicate using 8-word title fingerprint (catches cross-syndicated stories)
+  // Deduplicate using 8-word title fingerprint
   items = deduplicateByTitle(items);
 
   // Limit podcasts and blogs to max 5 per source
@@ -251,7 +250,6 @@ export async function fetchArsenalTransfers(): Promise<TransferItem[]> {
     }))
     .sort((a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime());
 
-  // Deduplicate transfers with same fingerprint approach
   const deduped = deduplicateByTitle(items);
   setCache(cacheKey, deduped);
   return deduped;
