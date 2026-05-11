@@ -78,7 +78,8 @@ const RSS_SOURCES = [
   { url: "https://www.justarsenal.com/category/arsenal-women/feed", name: "Just Arsenal Women", country: "England", type: "women" },
   { url: "https://feeds.bbci.co.uk/sport/women-s-football/rss.xml", name: "BBC Women's Football", country: "England", type: "women" },
   { url: "https://arseblog.news/category/arsenal-women/feed", name: "Arseblog Women News", country: "England", type: "women" },
-  { url: "https://dailycannon.com/feed", name: "Daily Cannon Women", country: "England", type: "women" },
+  { url: "https://dailycannon.com/tag/arsenal-women/feed", name: "Daily Cannon Women", country: "England", type: "women" },
+  { url: "https://shekicks.net/feed", name: "She Kicks", country: "England", type: "women" },
 ];
 
 const TRANSFER_SOURCES = [
