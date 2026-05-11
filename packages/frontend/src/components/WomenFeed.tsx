@@ -10,13 +10,36 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
+// ── READ TRACKING ──────────────────────────────────────────
+function getReadArticles(): Set<string> {
+  try {
+    const stored = localStorage.getItem("arsenal-read");
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  } catch { return new Set(); }
+}
+
+function markAsRead(contentId: string): void {
+  try {
+    const read = getReadArticles();
+    read.add(contentId);
+    const arr = [...read].slice(-500);
+    localStorage.setItem("arsenal-read", JSON.stringify(arr));
+  } catch {}
+}
+// ──────────────────────────────────────────────────────────
+
 export function WomenFeed() {
   const [items, setItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const PAGE_SIZE = 10;
+
+  useEffect(() => {
+    setReadIds(getReadArticles());
+  }, []);
 
   const fetchContent = useCallback(async () => {
     setLoading(true);
@@ -32,6 +55,11 @@ export function WomenFeed() {
   }, []);
 
   useEffect(() => { fetchContent(); }, [fetchContent]);
+
+  const handleArticleClick = (contentId: string) => {
+    markAsRead(contentId);
+    setReadIds(getReadArticles());
+  };
 
   const trimmed = searchTerm.trim().toLowerCase();
   const filtered = trimmed.length < 2 ? items : items.filter(i =>
@@ -73,22 +101,60 @@ export function WomenFeed() {
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-        {displayed.map((item) => (
-          <div key={item.contentId} style={{ background: "rgba(168,85,247,0.05)", borderRadius: "10px", padding: "1rem 1.25rem", borderLeft: "3px solid #a855f7" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem", flexWrap: "wrap" }}>
-              <span style={{ background: "rgba(168,85,247,0.2)", color: "#e879f9", padding: "2px 10px", borderRadius: "20px", fontSize: "0.72rem", fontWeight: "600", letterSpacing: "0.04em" }}>
-                {item.contentType === "women" ? "Women" : item.contentType}
-              </span>
-              <span style={{ fontSize: "0.75rem", color: "#9CA3AF" }}>
-                {item.sourceName} · {item.sourceCountry} · {item.publicationDate ? timeAgo(item.publicationDate) : ""}
-              </span>
+        {displayed.map((item) => {
+          const isRead = readIds.has(item.contentId);
+          return (
+            <div
+              key={item.contentId}
+              style={{
+                background: isRead ? "rgba(168,85,247,0.02)" : "rgba(168,85,247,0.05)",
+                borderRadius: "10px",
+                padding: "1rem 1.25rem",
+                borderLeft: `3px solid ${isRead ? "rgba(168,85,247,0.3)" : "#a855f7"}`,
+                opacity: isRead ? 0.6 : 1,
+                transition: "opacity 0.2s",
+                position: "relative",
+              }}
+            >
+              {/* Read checkmark badge */}
+              {isRead && (
+                <div style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "10px",
+                  background: "#2E8540",
+                  color: "white",
+                  borderRadius: "50%",
+                  width: "18px",
+                  height: "18px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "0.65rem",
+                  fontWeight: "700",
+                }}>✓</div>
+              )}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem", flexWrap: "wrap" }}>
+                <span style={{ background: "rgba(168,85,247,0.2)", color: "#e879f9", padding: "2px 10px", borderRadius: "20px", fontSize: "0.72rem", fontWeight: "600", letterSpacing: "0.04em" }}>
+                  {item.contentType === "women" ? "Women" : item.contentType}
+                </span>
+                <span style={{ fontSize: "0.75rem", color: "#9CA3AF" }}>
+                  {item.sourceName} · {item.sourceCountry} · {item.publicationDate ? timeAgo(item.publicationDate) : ""}
+                </span>
+              </div>
+              
+                href={item.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handleArticleClick(item.contentId)}
+                style={{ fontWeight: "600", fontSize: "0.95rem", color: isRead ? "#7c3aed" : "#c084fc", textDecoration: "none", display: "block", marginBottom: "0.4rem", lineHeight: "1.4" }}
+              >
+                {item.title}
+              </a>
+              <p style={{ margin: 0, fontSize: "0.84rem", color: "#9CA3AF", lineHeight: "1.5" }}>{item.summary}</p>
             </div>
-            <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ fontWeight: "600", fontSize: "0.95rem", color: "#c084fc", textDecoration: "none", display: "block", marginBottom: "0.4rem", lineHeight: "1.4" }}>
-              {item.title}
-            </a>
-            <p style={{ margin: 0, fontSize: "0.84rem", color: "#9CA3AF", lineHeight: "1.5" }}>{item.summary}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {hasMore && (

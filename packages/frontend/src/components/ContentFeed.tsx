@@ -20,6 +20,25 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
+// ── READ TRACKING ──────────────────────────────────────────
+function getReadArticles(): Set<string> {
+  try {
+    const stored = localStorage.getItem("arsenal-read");
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  } catch { return new Set(); }
+}
+
+function markAsRead(contentId: string): void {
+  try {
+    const read = getReadArticles();
+    read.add(contentId);
+    // Keep max 500 read articles
+    const arr = [...read].slice(-500);
+    localStorage.setItem("arsenal-read", JSON.stringify(arr));
+  } catch {}
+}
+// ──────────────────────────────────────────────────────────
+
 export function ContentFeed({ contentType: initialType }: { contentType?: string } = {}) {
   const [items, setItems] = useState<ContentItem[]>([]);
   const [contentType, setContentType] = useState(initialType ?? "");
@@ -27,8 +46,13 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
   const PAGE_SIZE = 10;
+
+  useEffect(() => {
+    setReadIds(getReadArticles());
+  }, []);
 
   const load = useCallback(async (type: string) => {
     setLoading(true);
@@ -53,6 +77,11 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
     }
     setContentType(value);
     setSearchTerm("");
+  };
+
+  const handleArticleClick = (contentId: string) => {
+    markAsRead(contentId);
+    setReadIds(getReadArticles());
   };
 
   const trimmed = searchTerm.trim().toLowerCase();
@@ -111,29 +140,80 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
       )}
 
       <div className="usa-card-group" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
-        {displayed.map((item) => (
-          <div key={item.contentId} className="usa-card__container" style={{ borderRadius: "10px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-            <div className="usa-card__body" style={{ padding: "0.85rem 1rem", flex: 1 }}>
-              <div style={{ display: "flex", gap: "0.4rem", marginBottom: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
-                <span style={{ fontSize: "0.7rem", background: "rgba(239,1,7,0.15)", color: "#EF0107", padding: "1px 8px", borderRadius: "20px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.04em" }}>{item.contentType}</span>
-                <span style={{ fontSize: "0.7rem", color: "#64748B" }}>{item.sourceCountry}</span>
+        {displayed.map((item) => {
+          const isRead = readIds.has(item.contentId);
+          return (
+            <div
+              key={item.contentId}
+              className="usa-card__container"
+              style={{
+                borderRadius: "10px",
+                background: isRead ? "rgba(255,255,255,0.015)" : "rgba(255,255,255,0.03)",
+                border: `1px solid ${isRead ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.06)"}`,
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                opacity: isRead ? 0.6 : 1,
+                transition: "opacity 0.2s",
+                position: "relative",
+              }}
+            >
+              {/* Read checkmark badge */}
+              {isRead && (
+                <div style={{
+                  position: "absolute",
+                  top: "8px",
+                  right: "8px",
+                  background: "#2E8540",
+                  color: "white",
+                  borderRadius: "50%",
+                  width: "18px",
+                  height: "18px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "0.65rem",
+                  fontWeight: "700",
+                  zIndex: 1,
+                }}>✓</div>
+              )}
+              <div className="usa-card__body" style={{ padding: "0.85rem 1rem", flex: 1 }}>
+                <div style={{ display: "flex", gap: "0.4rem", marginBottom: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+                  <span style={{ fontSize: "0.7rem", background: "rgba(239,1,7,0.15)", color: "#EF0107", padding: "1px 8px", borderRadius: "20px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.04em" }}>{item.contentType}</span>
+                  <span style={{ fontSize: "0.7rem", color: "#64748B" }}>{item.sourceCountry}</span>
+                </div>
+                <h3 className="usa-card__heading" style={{ margin: "0 0 0.4rem 0", fontSize: "0.95rem", fontWeight: "600", lineHeight: "1.4" }}>
+                  
+                    href={item.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => handleArticleClick(item.contentId)}
+                    style={{ color: isRead ? "#64748B" : "inherit", textDecoration: "none" }}
+                  >
+                    {item.title}
+                  </a>
+                </h3>
+                <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.82rem", color: "#9CA3AF", lineHeight: "1.5" }}>{item.summary}</p>
               </div>
-              <h3 className="usa-card__heading" style={{ margin: "0 0 0.4rem 0", fontSize: "0.95rem", fontWeight: "600", lineHeight: "1.4" }}>
-                <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>{item.title}</a>
-              </h3>
-              <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.82rem", color: "#9CA3AF", lineHeight: "1.5" }}>{item.summary}</p>
-            </div>
-            <div style={{ padding: "0.5rem 1rem 0.75rem", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-              <span style={{ fontSize: "0.72rem", color: "#64748B" }}>
-                {item.sourceName} · {item.publicationDate ? timeAgo(item.publicationDate) : item.durationLabel}
-              </span>
-              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                <BookmarkButton item={item} />
-                <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.72rem", color: "#60a5fa" }} aria-label="Open article">↗</a>
+              <div style={{ padding: "0.5rem 1rem 0.75rem", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                <span style={{ fontSize: "0.72rem", color: "#64748B" }}>
+                  {item.sourceName} · {item.publicationDate ? timeAgo(item.publicationDate) : item.durationLabel}
+                </span>
+                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                  <BookmarkButton item={item} />
+                  
+                    href={item.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => handleArticleClick(item.contentId)}
+                    style={{ fontSize: "0.72rem", color: "#60a5fa" }}
+                    aria-label="Open article"
+                  >↗</a>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {hasMore && (
