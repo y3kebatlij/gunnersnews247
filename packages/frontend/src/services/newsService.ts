@@ -188,8 +188,9 @@ export async function fetchArsenalNews(contentType?: string): Promise<ContentIte
       const combined = (title + description).toLowerCase();
       if (source.type === "podcast") return true;
       // General women's football sources — show all articles
+      // She Kicks and BBC Women — Arsenal articles only
       if (source.name === "She Kicks" || source.name === "BBC Women's Football") {
-        return contentType === "women" ? true : combined.includes("arsenal");
+        return combined.includes("arsenal");
       }
       if (contentType === "women") {
         return combined.includes("arsenal") && WOMEN_KEYWORDS.some(k => combined.includes(k));
