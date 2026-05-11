@@ -1,46 +1,34 @@
 import React, { useState, useEffect } from "react";
+import { ContentItem } from "../services/newsService";
+import { saveBookmark, removeBookmark, isBookmarked } from "./BookmarkList";
 
 interface BookmarkButtonProps {
-  contentId: string;
+  item: ContentItem;
 }
 
-function getBookmarks(): string[] {
-  try {
-    const stored = localStorage.getItem("arsenal-bookmarks");
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveBookmarks(bookmarks: string[]): void {
-  try {
-    localStorage.setItem("arsenal-bookmarks", JSON.stringify(bookmarks));
-  } catch {
-    // localStorage unavailable
-  }
-}
-
-export function BookmarkButton({ contentId }: BookmarkButtonProps) {
+export function BookmarkButton({ item }: BookmarkButtonProps) {
   const [bookmarked, setBookmarked] = useState(false);
 
   useEffect(() => {
-    setBookmarked(getBookmarks().includes(contentId));
-  }, [contentId]);
+    setBookmarked(isBookmarked(item.contentId));
+  }, [item.contentId]);
 
   const toggle = () => {
-    const current = getBookmarks();
-    let updated: string[];
-
-    if (current.includes(contentId)) {
-      updated = current.filter((id) => id !== contentId);
+    if (bookmarked) {
+      removeBookmark(item.contentId);
       setBookmarked(false);
     } else {
-      updated = [...current, contentId];
+      saveBookmark({
+        contentId: item.contentId,
+        title: item.title,
+        summary: item.summary,
+        sourceUrl: item.sourceUrl,
+        sourceName: item.sourceName,
+        contentType: item.contentType,
+        publicationDate: item.publicationDate,
+      });
       setBookmarked(true);
     }
-
-    saveBookmarks(updated);
   };
 
   return (
@@ -50,6 +38,7 @@ export function BookmarkButton({ contentId }: BookmarkButtonProps) {
       aria-label={bookmarked ? "Remove bookmark" : "Add bookmark"}
       aria-pressed={bookmarked}
       type="button"
+      style={{ fontSize: "1.3rem", cursor: "pointer", background: "none", border: "none", color: bookmarked ? "#F59E0B" : "#64748B" }}
     >
       {bookmarked ? "★" : "☆"}
     </button>
