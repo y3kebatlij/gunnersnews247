@@ -143,6 +143,10 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
         {displayed.map((item) => {
           const isRead = readIds.has(item.contentId);
           return (
+<div className="usa-card-group" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
+        {displayed.map((item) => {
+          const isRead = readIds.has(item.contentId);
+          return (
             <div
               key={item.contentId}
               className="usa-card__container"
@@ -158,24 +162,8 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
                 position: "relative",
               }}
             >
-              {/* Read checkmark badge */}
               {isRead && (
-                <div style={{
-                  position: "absolute",
-                  top: "8px",
-                  right: "8px",
-                  background: "#2E8540",
-                  color: "white",
-                  borderRadius: "50%",
-                  width: "18px",
-                  height: "18px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "0.65rem",
-                  fontWeight: "700",
-                  zIndex: 1,
-                }}>✓</div>
+                <div style={{ position: "absolute", top: "8px", right: "8px", background: "#2E8540", color: "white", borderRadius: "50%", width: "18px", height: "18px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: "700", zIndex: 1 }}>✓</div>
               )}
               <div className="usa-card__body" style={{ padding: "0.85rem 1rem", flex: 1 }}>
                 <div style={{ display: "flex", gap: "0.4rem", marginBottom: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
@@ -183,15 +171,7 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
                   <span style={{ fontSize: "0.7rem", color: "#64748B" }}>{item.sourceCountry}</span>
                 </div>
                 <h3 className="usa-card__heading" style={{ margin: "0 0 0.4rem 0", fontSize: "0.95rem", fontWeight: "600", lineHeight: "1.4" }}>
-                  
-                    href={item.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => handleArticleClick(item.contentId)}
-                    style={{ color: isRead ? "#64748B" : "inherit", textDecoration: "none" }}
-                  >
-                    {item.title}
-                  </a>
+                  <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleArticleClick(item.contentId)} style={{ color: isRead ? "#64748B" : "inherit", textDecoration: "none" }}>{item.title}</a>
                 </h3>
                 <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.82rem", color: "#9CA3AF", lineHeight: "1.5" }}>{item.summary}</p>
               </div>
@@ -201,28 +181,10 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
                 </span>
                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                   <BookmarkButton item={item} />
-                  
-                    href={item.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => handleArticleClick(item.contentId)}
-                    style={{ fontSize: "0.72rem", color: "#60a5fa" }}
-                    aria-label="Open article"
-                  >↗</a>
+                  <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleArticleClick(item.contentId)} style={{ fontSize: "0.72rem", color: "#60a5fa" }} aria-label="Open article">↗</a>
                 </div>
               </div>
             </div>
           );
         })}
       </div>
-
-      {hasMore && (
-        <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
-          <button onClick={() => setPage(page + 1)} type="button" style={{ padding: "0.6rem 2rem", background: "rgba(239,1,7,0.1)", color: "#EF0107", border: "2px solid #EF0107", borderRadius: "20px", fontWeight: "600", cursor: "pointer", fontSize: "0.88rem" }}>
-            Load more ({filtered.length - displayed.length} remaining)
-          </button>
-        </div>
-      )}
-    </section>
-  );
-}
