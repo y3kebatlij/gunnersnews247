@@ -132,8 +132,8 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
         <p style={{ color: "#9CA3AF" }}>No content available.</p>
       )}
 
-      {!loading && items.length > 0 && contentType === "" && (
-        <AudioSummary items={items.slice(0, 10)} />
+      {contentType === "" && (
+        <AudioSummary />
       )}
       <div className="usa-card-group" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
         {displayed.map((item) => {
