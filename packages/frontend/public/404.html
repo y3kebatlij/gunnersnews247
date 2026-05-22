@@ -6,9 +6,10 @@
   <script>
     var l = window.location;
     var path = l.pathname;
-    if (path !== '/' && path.indexOf('/?') === -1) {
+    var base = '/arsenalnews-aradaw';
+    if (path !== base + '/' && path.indexOf('/?') === -1) {
       sessionStorage.setItem('redirect', path + l.search + l.hash);
-      l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + '/');
+      l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + base + '/');
     }
   </script>
 </head>
