@@ -32,6 +32,9 @@ jobs:
       - name: Build shared package
         run: npx tsc --build packages/shared/tsconfig.json
 
+      - name: Clean previous build
+        run: rm -rf packages/frontend/dist
+
       - name: Build frontend
         run: cd packages/frontend && npx vite build
         env:
