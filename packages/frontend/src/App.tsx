@@ -38,7 +38,7 @@ function Preloader() {
 
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/arsenalnews-aradaw">
       <ThemeProvider>
         <WebSocketProvider>
           <div className="usa-layout-docs">
