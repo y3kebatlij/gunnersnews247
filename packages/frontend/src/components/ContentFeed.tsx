@@ -20,7 +20,6 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-// ── READ TRACKING ──────────────────────────────────────────
 function getReadArticles(): Set<string> {
   try {
     const stored = localStorage.getItem("arsenal-read");
@@ -32,12 +31,10 @@ function markAsRead(contentId: string): void {
   try {
     const read = getReadArticles();
     read.add(contentId);
-    // Keep max 500 read articles
     const arr = [...read].slice(-500);
     localStorage.setItem("arsenal-read", JSON.stringify(arr));
   } catch {}
 }
-// ──────────────────────────────────────────────────────────
 
 export function ContentFeed({ contentType: initialType }: { contentType?: string } = {}) {
   const [items, setItems] = useState<ContentItem[]>([]);
@@ -50,9 +47,7 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
   const navigate = useNavigate();
   const PAGE_SIZE = 10;
 
-  useEffect(() => {
-    setReadIds(getReadArticles());
-  }, []);
+  useEffect(() => { setReadIds(getReadArticles()); }, []);
 
   const load = useCallback(async (type: string) => {
     setLoading(true);
@@ -71,10 +66,7 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
   useEffect(() => { load(contentType); }, [contentType, load]);
 
   const handleFilter = (value: string) => {
-    if (value === "video") {
-      navigate("/video");
-      return;
-    }
+    if (value === "video") { navigate("/video"); return; }
     setContentType(value);
     setSearchTerm("");
   };
@@ -143,10 +135,6 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
         {displayed.map((item) => {
           const isRead = readIds.has(item.contentId);
           return (
-<div className="usa-card-group" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
-        {displayed.map((item) => {
-          const isRead = readIds.has(item.contentId);
-          return (
             <div
               key={item.contentId}
               className="usa-card__container"
@@ -188,3 +176,14 @@ export function ContentFeed({ contentType: initialType }: { contentType?: string
           );
         })}
       </div>
+
+      {hasMore && (
+        <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+          <button onClick={() => setPage(page + 1)} type="button" style={{ padding: "0.6rem 2rem", background: "rgba(239,1,7,0.1)", color: "#EF0107", border: "2px solid #EF0107", borderRadius: "20px", fontWeight: "600", cursor: "pointer", fontSize: "0.88rem" }}>
+            Load more ({filtered.length - displayed.length} remaining)
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
