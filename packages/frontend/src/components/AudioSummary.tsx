@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// v3 - force bundle refresh
 import { fetchArsenalNews } from "../services/newsService";
 
 type AudioState = "idle" | "loading" | "playing" | "paused" | "error";
@@ -29,8 +28,8 @@ export function AudioSummary() {
       const articles = await fetchArsenalNews();
       const top5 = articles.slice(0, 5);
       const date = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-      let text = "Good morning Arsenal fans! Here is your Arsenal briefing for " + date + ". ";
-      top5.forEach((a, i) => { text += "Story " + (i + 1) + ": " + a.title + ". " + a.summary + " "; });
+      let text = `Hello Gunners! Here is your Arsenal briefing for ${date}. `;
+      top5.forEach((a, i) => { text += `Story ${i + 1}: ${a.title}. ${a.summary} `; });
       text += "That is your Arsenal Daily Briefing. Come on you Gunners!";
       setScript(text);
       const utt = new SpeechSynthesisUtterance(text);
@@ -54,18 +53,18 @@ export function AudioSummary() {
       </div>
       <p className="audio-summary__desc" style={{ marginTop: "0.5rem" }}>Listen to today's Arsenal news summary, powered by your browser's voice.</p>
       <div className="audio-summary__controls" style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem" }}>
-        {state === "idle" && <button className="usa-button audio-summary__btn" onClick={handleGenerate} type="button">Play Briefing</button>}
+        {state === "idle" && <button className="usa-button audio-summary__btn" onClick={handleGenerate} type="button">▶ Play Briefing</button>}
         {state === "loading" && <button className="usa-button" disabled type="button">Generating...</button>}
         {state === "playing" && (
           <>
-            <button className="usa-button" onClick={() => { window.speechSynthesis.pause(); setState("paused"); }} type="button">Pause</button>
-            <button className="usa-button usa-button--outline" onClick={() => { window.speechSynthesis.cancel(); setState("idle"); }} type="button">Stop</button>
+            <button className="usa-button" onClick={() => { window.speechSynthesis.pause(); setState("paused"); }} type="button">⏸ Pause</button>
+            <button className="usa-button usa-button--outline" onClick={() => { window.speechSynthesis.cancel(); setState("idle"); }} type="button">⏹ Stop</button>
           </>
         )}
         {state === "paused" && (
           <>
-            <button className="usa-button" onClick={() => { window.speechSynthesis.resume(); setState("playing"); }} type="button">Resume</button>
-            <button className="usa-button usa-button--outline" onClick={() => { window.speechSynthesis.cancel(); setState("idle"); }} type="button">Stop</button>
+            <button className="usa-button" onClick={() => { window.speechSynthesis.resume(); setState("playing"); }} type="button">▶ Resume</button>
+            <button className="usa-button usa-button--outline" onClick={() => { window.speechSynthesis.cancel(); setState("idle"); }} type="button">⏹ Stop</button>
           </>
         )}
         {state === "error" && (
