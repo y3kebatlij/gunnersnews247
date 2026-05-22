@@ -218,10 +218,9 @@ export async function fetchArsenalNews(contentType?: string): Promise<ContentIte
   // Deduplicate using 8-word title fingerprint
   items = deduplicateByTitle(items);
 
-  // Limit podcasts and blogs to max 5 per source
+  // Limit all content types to max 5 per source
   const sourceCount: Record<string, number> = {};
   items = items.filter(item => {
-    if (item.contentType !== "podcast" && item.contentType !== "blog") return true;
     const key = `${item.contentType}-${item.sourceName}`;
     sourceCount[key] = (sourceCount[key] || 0) + 1;
     return sourceCount[key] <= 5;
