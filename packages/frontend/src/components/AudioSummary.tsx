@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+// v3 - force bundle refresh
 import { fetchArsenalNews } from "../services/newsService";
 
 type AudioState = "idle" | "loading" | "playing" | "paused" | "error";
