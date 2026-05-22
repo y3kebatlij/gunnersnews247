@@ -26,7 +26,7 @@ export function AudioSummary() {
     setState("loading");
     try {
       const articles = await fetchArsenalNews();
-      const top5 = articles.slice(0, 5);
+      const top5 = articles.filter(a => a.contentType !== "video").slice(0, 5);
       const date = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
       let text = `Hello Gunners! Here is your Arsenal briefing for ${date}. `;
       top5.forEach((a, i) => { text += `Story ${i + 1}: ${a.title}. ${a.summary} `; });
