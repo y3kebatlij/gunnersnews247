@@ -8,11 +8,13 @@ interface PlayerInjury {
   expectedReturn: string;
 }
 
+const LAST_UPDATED = "2026-05-21";
+
 const INJURIES: PlayerInjury[] = [
-  { player: "Jurrien Timber", position: "Defender", injury: "Muscle injury", status: "Doubtful", expectedReturn: "vs PSG Champions League Final" },
-  { player: "Mikel Merino", position: "Midfielder", injury: "Broken foot (surgery)", status: "Doubtful", expectedReturn: "vs PSG Champions League Final" },
-  { player: "Martin Odegaard", position: "Midfielder", injury: "Knock", status: "Return", expectedReturn: "Expected back vs West Ham" },
-  { player: "Kai Havertz", position: "Midfielder", injury: "Groin (muscular niggle)", status: "Return", expectedReturn: "Expected back vs West Ham" },
+  { player: "Jurrien Timber", position: "Defender", injury: "Muscle injury", status: "Return", expectedReturn: "Available for Crystal Palace" },
+  { player: "Mikel Merino", position: "Midfielder", injury: "Broken foot (surgery)", status: "Doubtful", expectedReturn: "Late May — monitor" },
+  { player: "Martin Odegaard", position: "Midfielder", injury: "Knock", status: "Return", expectedReturn: "Available for Crystal Palace" },
+  { player: "Kai Havertz", position: "Midfielder", injury: "Groin (muscular niggle)", status: "Return", expectedReturn: "Available for Crystal Palace" },
 ];
 
 const STATUS_STYLES = {
@@ -22,6 +24,10 @@ const STATUS_STYLES = {
 };
 
 export function InjuryReport() {
+  const daysSinceUpdate = Math.floor((Date.now() - new Date(LAST_UPDATED).getTime()) / 86400000);
+  const isOwner = localStorage.getItem("arsenal-owner") === "london49";
+  const isStale = daysSinceUpdate > 3 && isOwner;
+
   return (
     <section style={{ marginTop: "2rem" }} aria-label="Injury report">
       <h3 style={{ borderBottom: "2px solid #EF0107", paddingBottom: "0.5rem", marginBottom: "1rem" }}>Injury Report</h3>
@@ -40,7 +46,11 @@ export function InjuryReport() {
           );
         })}
       </div>
-      <p style={{ fontSize: "0.75rem", color: "#6B7280", marginTop: "0.75rem" }}>Last updated: May 10, 2026 · Source: Arsenal FC, Daily Cannon</p>
+      <p style={{ fontSize: "0.75rem", color: isStale ? "#EF0107" : "#6B7280", marginTop: "0.75rem" }}>
+        {isStale
+          ? `⚠️ Injury report is ${daysSinceUpdate} days old — update needed`
+          : `Last updated: May 21, 2026 · Source: Arsenal FC, Daily Cannon`}
+      </p>
     </section>
   );
 }
