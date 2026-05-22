@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchArsenalNews, ContentItem } from "../services/newsService";
 import { BookmarkButton } from "./BookmarkButton";
-import { AudioSummary } from "./AudioSummary"; // restore
+import { AudioSummary } from "./AudioSummary"; // restore v2
 
 const FILTERS = [
   { label: "All", value: "" },
