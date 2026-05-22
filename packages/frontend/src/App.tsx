@@ -49,7 +49,6 @@ export function App() {
                 <Scoreboard />
                 <Routes>
                   <Route path="/" element={<ContentFeed />} />
-                  <Route path="/London49/" element={<ContentFeed />} />
                   <Route path="/transfers" element={<TransferFeed />} />
                   <Route path="/schedule" element={<ScheduleView />} />
                   <Route path="/standings" element={<StandingsTable />} />
