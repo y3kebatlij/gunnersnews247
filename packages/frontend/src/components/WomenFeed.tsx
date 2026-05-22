@@ -143,14 +143,7 @@ export function WomenFeed() {
                 </span>
               </div>
               
-                href={item.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => handleArticleClick(item.contentId)}
-                style={{ fontWeight: "600", fontSize: "0.95rem", color: isRead ? "#7c3aed" : "#c084fc", textDecoration: "none", display: "block", marginBottom: "0.4rem", lineHeight: "1.4" }}
-              >
-                {item.title}
-              </a>
+                <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleArticleClick(item.contentId)} style={{ fontWeight: "600", fontSize: "0.95rem", color: isRead ? "#7c3aed" : "#c084fc", textDecoration: "none", display: "block", marginBottom: "0.4rem", lineHeight: "1.4" }}>{item.title}</a>
               <p style={{ margin: 0, fontSize: "0.84rem", color: "#9CA3AF", lineHeight: "1.5" }}>{item.summary}</p>
             </div>
           );
