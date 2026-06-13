@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+// base: /gunnersnews247/
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import { WebSocketProvider } from "./context/WebSocketContext";
