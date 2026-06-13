@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import { WebSocketProvider } from "./context/WebSocketContext";
 import { Header } from "./components/Header";
-import { ContentFeed } from "./components/ContentFeed"h;
+import { ContentFeed } from "./components/ContentFeed";
 import { TransferFeed } from "./components/TransferFeed";
 import { Scoreboard } from "./components/Scoreboard";
 import { ScheduleView } from "./components/ScheduleView";
