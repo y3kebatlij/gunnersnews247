@@ -6,7 +6,7 @@
   <script>
     var l = window.location;
     var path = l.pathname;
-    var base = '/arsenalnews-aradaw';
+    var base = '/gunnersnews247';
     if (path !== base + '/' && path.indexOf('/?') === -1) {
       sessionStorage.setItem('redirect', path + l.search + l.hash);
       l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + base + '/');
